@@ -1116,7 +1116,26 @@ if(new URLSearchParams(location.search).has('test')){
     state: function(){
       return { idx: model ? model.idx : -1, total: model ? model.strokes.length : 0, cheer: !document.getElementById('cheer').hidden, stars: data.total };
     },
-    holdCheer: function(){ clearTimeout(cheerTimer); return true; }
+    holdCheer: function(){ clearTimeout(cheerTimer); return true; },
+    audit: function(){
+      var out = [];
+      TABS.forEach(function(tb){
+        if(tb.id === 'star') return;
+        tb.items().forEach(function(it){
+          var w = buildWord(it.ch);
+          var bad = [], tiny = [];
+          w.strokes.forEach(function(st){
+            for(var k=0;k<st.pts.length;k++){
+              var p = st.pts[k];
+              if(p[0] < -1 || p[0] > 1001 || p[1] < -1 || p[1] > 1001) bad.push(st.idx);
+            }
+            if(st.len < 8) tiny.push(st.idx);
+          });
+          out.push({ch:it.ch, strokes:w.strokes.length, out:bad, tiny:tiny});
+        });
+      });
+      return out;
+    }
   };
 }
 
