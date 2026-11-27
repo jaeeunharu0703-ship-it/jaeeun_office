@@ -127,6 +127,99 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
 #cheer .btns .b{background:var(--pink); color:#fff;}
 .cf{position:absolute; font-size:22px; animation:fall 1.9s linear forwards; pointer-events:none;}
 @keyframes fall{0%{transform:translateY(-10vh) rotate(0); opacity:1;} 100%{transform:translateY(95vh) rotate(320deg); opacity:0;}}
+/* ---------- 두 캐릭터 ---------- */
+.duo{position:relative; flex:0 0 auto; width:46px; height:46px;}
+.duo .avatar{width:46px; height:46px;}
+.duo .petmini{position:absolute; right:-9px; bottom:-7px; width:26px; height:26px; border-radius:50%; object-fit:cover; object-position:50% 28%; border:2px solid #fff; box-shadow:0 2px 6px rgba(180,120,80,.22); background:#FFF6EC;}
+.stars .sep{display:inline-block; width:1px; height:13px; background:var(--line); margin:0 2px;}
+.stars .bn{color:#C98A3E;}
+
+/* ---------- 테마 필터 ---------- */
+.themebar{display:flex; gap:6px; padding:8px 12px 0; overflow-x:auto; flex:0 0 auto; scrollbar-width:none;}
+.themebar::-webkit-scrollbar{display:none;}
+.thchip{flex:0 0 auto; border:1.5px solid var(--line); background:#fff; color:var(--ink2); border-radius:999px; padding:6px 11px; font-size:12px; font-weight:800; box-shadow:var(--shadow-s); transition:.15s; white-space:nowrap;}
+.thchip.on{background:#FFF1F6; border-color:#FFC9DA; color:var(--pink-d);}
+.thchip .te{font-size:13px;}
+.sec-title.row{display:flex; align-items:center; gap:6px;}
+
+/* ---------- 쓰기 화면 : 예문 ---------- */
+.sayline{position:absolute; left:8px; right:8px; top:0; text-align:center; font-size:12px; font-weight:800; color:#A98C74; letter-spacing:-.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none;}
+.stage{padding:18px 10px 2px;}
+.stagepet{position:static; flex:0 0 auto; width:34px; height:34px; border-radius:50%; object-fit:cover; object-position:50% 26%; background:#FFF3E4; border:2px solid #fff; box-shadow:0 2px 8px rgba(180,120,80,.14); pointer-events:none; transition:transform .18s;}
+.stagepet.hop{animation:hop .5s ease;}
+@keyframes hop{0%{transform:translateY(0) scale(1);} 35%{transform:translateY(-12px) scale(1.08) rotate(-6deg);} 70%{transform:translateY(0) scale(.98);} 100%{transform:translateY(0) scale(1);}}
+.big-plus{position:absolute; right:16px; bottom:64px; font-size:15px; font-weight:900; color:#C98A3E; opacity:0; pointer-events:none;}
+.big-plus.go{animation:plusUp 1.1s ease forwards;}
+@keyframes plusUp{0%{opacity:0; transform:translateY(6px) scale(.8);} 25%{opacity:1; transform:translateY(-2px) scale(1.1);} 100%{opacity:0; transform:translateY(-34px) scale(1);}}
+
+/* ---------- 받아쓰기 ---------- */
+.dict-hero{margin:12px 14px 2px; padding:18px 16px; text-align:center; background:linear-gradient(150deg,#FFF3F7,#FFF9EE); border:1.5px solid #FFE1EA; border-radius:22px; box-shadow:var(--shadow-s);}
+.dict-hero .e{font-size:34px; line-height:1;}
+.dict-hero .t{font-size:17px; font-weight:900; margin-top:4px;}
+.dict-hero .s{font-size:12px; color:var(--ink2); font-weight:700; margin-top:3px;}
+.lvlist{display:grid; grid-template-columns:1fr 1fr; gap:9px; padding:8px 14px 0;}
+.lvcard{position:relative; text-align:left; border:1.5px solid var(--line); background:#fff; border-radius:18px; padding:12px 12px; box-shadow:var(--shadow-s); border-bottom-width:3px; transition:transform .08s;}
+.lvcard:active{transform:scale(.97);}
+.lvcard.on{border-color:#FFC9DA; background:#FFF7FA; box-shadow:0 0 0 3px var(--pink-l);}
+.lvcard .lt{font-size:13.5px; font-weight:900;}
+.lvcard .ls{font-size:10.5px; color:var(--ink2); font-weight:700; margin-top:2px;}
+.lvcard .ln{position:absolute; top:10px; right:11px; font-size:11px; font-weight:900; color:var(--pink-d);}
+.startbtn{display:block; margin:16px 14px 0; width:calc(100% - 28px); border:none; border-radius:18px; padding:16px; font-size:17px; font-weight:900; color:#fff; background:linear-gradient(140deg,#FF8FAF,#F2608A); box-shadow:0 8px 18px rgba(242,96,138,.3);}
+.startbtn:active{transform:scale(.98);}
+.dict-best{margin:10px 18px 0; font-size:12px; font-weight:800; color:var(--ink2); text-align:center;}
+.dict-best b{color:var(--pink-d);}
+.tipbox{margin:12px 14px calc(20px + env(safe-area-inset-bottom)); padding:13px 15px; background:#fff; border:1.5px dashed var(--line); border-radius:16px; font-size:12px; font-weight:700; color:var(--ink2); line-height:1.65;}
+.dictdots{display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 14px calc(10px + env(safe-area-inset-bottom)); flex:0 0 auto;}
+.dictdots i{width:9px; height:9px; border-radius:50%; background:#F0DFD0; display:block;}
+.dictdots i.on{background:var(--pink); transform:scale(1.2);}
+.dictdots i.done{background:var(--mint);}
+.dictdots .dn{font-size:11px; font-weight:800; color:var(--ink2); margin-left:4px;}
+#report{position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(74,59,49,.35); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px);}
+#report .paper{position:relative; width:min(94vw,390px); max-height:92vh; overflow:auto; background:#FFFDF8; border-radius:24px; padding:20px 18px 18px; box-shadow:0 18px 50px rgba(120,70,40,.28); border:2px solid #FFE7D2; animation:pop .4s cubic-bezier(.2,1.4,.4,1);}
+#report .ph{text-align:center; font-size:12px; font-weight:900; letter-spacing:3px; color:var(--ink2);}
+#report .sc{text-align:center; font-size:46px; font-weight:900; color:var(--pink-d); line-height:1.1; margin-top:6px;}
+#report .sc small{font-size:17px; color:var(--ink2); font-weight:800;}
+#report .stamp{display:flex; flex-direction:column; align-items:center; gap:2px; margin:5px auto 0; width:112px; height:112px; border:3px solid #FF8FAF; border-radius:50%; justify-content:center; transform:rotate(-11deg); color:#F2608A; font-weight:900; font-size:12px; background:rgba(255,255,255,.6);}
+#report .stamp img{width:44px; height:44px; border-radius:50%; object-fit:cover; object-position:50% 24%; background:#FFF3E4;}
+#report .list{list-style:none; margin:12px 0 0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+#report .list li{display:flex; align-items:center; gap:5px; background:#fff; border:1.5px solid var(--line); border-radius:11px; padding:6px 9px; font-size:13px; font-weight:800;}
+#report .list li b{font-size:15px;}
+#report .list li .ok{margin-left:auto; color:var(--mint); font-size:12px;}
+#report .bonus{text-align:center; margin-top:12px; font-size:13px; font-weight:900; color:#C98A3E;}
+#report .btns{display:flex; gap:8px; margin-top:12px;}
+#report .btns button{flex:1 1 0; border:none; border-radius:14px; padding:12px 6px; font-size:13.5px; font-weight:900;}
+#report .btns .a{background:var(--pink); color:#fff;}
+#report .btns .b{background:#fff; color:var(--ink); border:1.5px solid var(--line);}
+
+/* ---------- 칠뜩이 펫방 ---------- */
+.petcard{margin:12px 14px 0; background:linear-gradient(160deg,#FFF8F0,#FFF1F6 70%,#FFF6EC); border:2px solid #FFE1EA; border-radius:26px; padding:14px 14px 16px; box-shadow:var(--shadow); position:relative; overflow:hidden;}
+.petbubble{position:relative; margin:0 auto 6px; width:fit-content; max-width:94%; background:#fff; border:2px solid #FFDDE9; color:#D9567C; font-size:12.5px; font-weight:800; padding:8px 13px; border-radius:16px; text-align:center; box-shadow:var(--shadow-s); transition:transform .15s;}
+.petbubble:after{content:''; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%) rotate(45deg); width:12px; height:12px; background:#fff; border-right:2px solid #FFDDE9; border-bottom:2px solid #FFDDE9;}
+.petbubble.pop{animation:pop .35s cubic-bezier(.2,1.5,.4,1);}
+.petstage{position:relative; display:flex; justify-content:center; padding:2px 0 0;}
+.petstage img{width:min(60vw,240px); max-height:34vh; object-fit:contain; border-radius:26px; background:#FFF6EC; transition:transform .2s;}
+.petstage img.eating{animation:munch .34s ease-in-out 4;}
+@keyframes munch{0%,100%{transform:scale(1) rotate(0);} 30%{transform:scale(1.05) rotate(-2.5deg);} 65%{transform:scale(.98) rotate(2deg);}}
+.bonefly{position:absolute; left:50%; top:8%; font-size:26px; opacity:0; pointer-events:none;}
+.bonefly.go{animation:boneTo 1.1s ease-in forwards;}
+@keyframes boneTo{0%{opacity:1; transform:translate(-50%,-10px) scale(1.1) rotate(-20deg);} 60%{opacity:1; transform:translate(-50%,46%) scale(1) rotate(15deg);} 100%{opacity:0; transform:translate(-50%,62%) scale(.5) rotate(30deg);}}
+.petname{margin-top:8px; text-align:center; font-size:20px; font-weight:900; letter-spacing:-.5px;}
+.petname .lv{font-size:12px; color:#fff; background:var(--pink); border-radius:999px; padding:3px 9px; vertical-align:3px; margin-left:5px;}
+.petmood{margin-top:2px; text-align:center; font-size:12px; font-weight:800; color:var(--ink2);}
+.bars{margin-top:10px; display:flex; flex-direction:column; gap:7px;}
+.bar{display:flex; align-items:center; gap:8px;}
+.bar .bk{flex:0 0 auto; width:62px; font-size:11px; font-weight:800; color:var(--ink2);}
+.bar .track{flex:1 1 auto; height:12px; border-radius:999px; background:#fff; border:1.5px solid var(--line); overflow:hidden;}
+.bar .track i{display:block; height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,#FFC98F,#F9A45E); transition:width .5s cubic-bezier(.2,1,.3,1);}
+.bar .track i.happy{background:linear-gradient(90deg,#FFA7C4,#F2608A);}
+.bar .track i.bond{background:linear-gradient(90deg,#9BDCC4,#5FBF9E);}
+.bar b{flex:0 0 auto; width:42px; text-align:right; font-size:11px; font-weight:900; color:var(--pink-d);}
+.feedbtn{display:block; width:100%; margin-top:14px; border:none; border-radius:18px; padding:15px; font-size:16px; font-weight:900; color:#fff; background:linear-gradient(140deg,#FFC271,#F09A3E); box-shadow:0 8px 18px rgba(240,154,62,.3);}
+.feedbtn:active{transform:scale(.98);}
+.feedbtn:disabled{background:#E9DCCD; color:#fff; box-shadow:none;}
+.pethint{margin-top:9px; text-align:center; font-size:11.5px; font-weight:800; color:var(--ink2);}
+.pethint b{color:#C98A3E;}
+
 @media (max-height:560px){ .tools button{font-size:11.5px; padding:8px 2px;} .card .g{font-size:28px;} }
 @media (max-width:430px){ .mbtn .mt{display:none;} .mbtn{padding:7px 8px; border-radius:14px;} header.top{gap:8px;} }
 @media (max-width:420px){ .tools{gap:5px; padding:6px 8px 2px;} .tools button{font-size:11px; padding:9px 2px;} .navrow{padding:6px 8px calc(8px + env(safe-area-inset-bottom));} .wt-title .big{font-size:19px;} }
@@ -135,15 +228,18 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
 <body>
 <div class="app">
   <header class="top">
-    <img class="avatar" src="img/yoonseo-char.jpg" alt="윤서">
+    <div class="duo">
+      <img class="avatar" src="img/yoonseo-char.jpg" alt="윤서">
+      <img class="petmini" src="img/childeuk.jpg" alt="칠뜩이">
+    </div>
     <div class="hd">
       <h1>윤서의 한글 공부방</h1>
-      <p class="sub">한 획씩, 바르게 써 볼까요?</p>
+      <p class="sub">칠뜩이와 함께, 한 획씩!</p>
     </div>
     <button class="mbtn" id="btnMusic" aria-pressed="true" aria-label="배경음악 켜기·끄기" title="배경음악">
       <span class="mi">🎵</span><span class="mt">배경음</span>
     </button>
-    <div class="stars" title="모은 별">⭐ <b id="starTotal">0</b></div>
+    <div class="stars" title="모은 별과 뼈다귀">⭐ <b id="starTotal">0</b><span class="sep"></span>🦴 <b class="bn" id="boneTotal">0</b></div>
   </header>
 
   <div class="summary" id="summary">
@@ -157,6 +253,7 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
   <main class="main">
     <!-- 목록 -->
     <section class="view" id="viewList">
+      <div class="themebar" id="themeBar" hidden></div>
       <div class="scroll">
         <div class="grid" id="cardGrid"></div>
       </div>
@@ -166,23 +263,32 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
     <section class="view" id="viewWrite" hidden>
       <div class="wt">
         <button class="iconbtn" id="btnBack" aria-label="목록으로">←</button>
-        <div class="wt-title"><span class="big" id="wLetter">강</span><span class="small" id="wParts">ㄱ · ㅏ · ㅇ</span></div>
+        <div class="wt-title" id="wtNorm"><span class="big" id="wLetter">강</span><span class="small" id="wParts">ㄱ · ㅏ · ㅇ</span></div>
+        <div class="wt-title" id="wtDict" hidden><span class="big" id="dictNum">1 / 10</span><span class="small" id="dictLvLabel">받아쓰기 · 쉬운 글자</span></div>
+        <img class="stagepet" id="stagePet" src="img/childeuk.jpg" alt="칠뜩이">
         <button class="iconbtn" id="btnSay2" aria-label="소리 듣기">🔊</button>
       </div>
       <div class="stage" id="stage">
+        <div class="sayline" id="wSay"></div>
         <canvas id="pad"></canvas>
+        <span class="big-plus" id="bonePlus">🦴 +1</span>
         <div class="bubble" id="bubble"></div>
       </div>
-      <div class="tools">
+      <div class="tools" id="toolsNorm">
         <button id="btnShow">👀 획순 보기</button>
         <button id="btnReset">🔄 다시 쓰기</button>
         <button id="btnGuide" class="on">4분할 선</button>
       </div>
-      <div class="navrow">
+      <div class="tools" id="toolsDict" hidden>
+        <button id="btnHint">👀 힌트 살짝 보기</button>
+        <button id="btnReset2">🔄 다시 쓰기</button>
+      </div>
+      <div class="navrow" id="navNorm">
         <button id="btnPrev">◀ 이전</button>
         <span class="prog" id="wProg">1 / 6 획</span>
         <button id="btnNext">다음 ▶</button>
       </div>
+      <div class="dictdots" id="dictDots" hidden></div>
     </section>
 
     <!-- 출석·스티커 -->
@@ -213,6 +319,53 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
         <div class="empty" id="starEmpty">아직 스티커가 없어요.<br>글자를 하나 완성하면 별이 쌓여요!</div>
       </div>
     </section>
+
+    <!-- 칠뜩이 펫방 -->
+    <section class="view" id="viewPet" hidden>
+      <div class="scroll">
+        <div class="petcard">
+          <div class="petbubble" id="petBubble">안녕! 나는 칠뜩이야 🐾</div>
+          <div class="petstage">
+            <img id="petImg" src="img/childeuk.jpg" alt="칠뜩이">
+            <span class="bonefly" id="boneFly">🦴</span>
+          </div>
+          <div class="petname">칠뜩이 <span class="lv" id="petLv">Lv.1</span></div>
+          <div class="petmood" id="petMood">아직 배가 고픈가 봐요</div>
+          <div class="bars">
+            <div class="bar"><span class="bk">🍖 배부름</span><div class="track"><i id="petFullBar"></i></div><b id="petFullN">0%</b></div>
+            <div class="bar"><span class="bk">💗 기분</span><div class="track"><i class="happy" id="petHappyBar"></i></div><b id="petHappyN">0%</b></div>
+            <div class="bar"><span class="bk">💞 친밀도</span><div class="track"><i class="bond" id="petBondBar"></i></div><b id="petBondN">Lv.1</b></div>
+          </div>
+          <button class="feedbtn" id="btnFeed">🦴 뼈다귀 주기</button>
+          <div class="pethint">가진 뼈다귀 <b id="petBones">0</b>개 · 오늘 먹은 뼈다귀 <b id="petTodayFed">0</b>개</div>
+        </div>
+        <div class="sec-title">🧸 칠뜩이와 친해지는 법</div>
+        <div class="tipbox">
+          글자나 단어를 하나 완성할 때마다 🦴 뼈다귀가 <b>1개</b>씩 쌓여요.<br>
+          받아쓰기 10문제를 다 쓰면 <b>보너스 🦴 3개</b>!<br>
+          뼈다귀를 주면 칠뜩이가 배부르고 기분이 좋아져요.
+        </div>
+      </div>
+    </section>
+
+    <!-- 받아쓰기 -->
+    <section class="view" id="viewDict" hidden>
+      <div class="scroll">
+        <div class="dict-hero">
+          <div class="e">📝</div>
+          <div class="t">받아쓰기 놀이</div>
+          <div class="s">소리를 듣고, 바른 획순으로 써 보세요!</div>
+        </div>
+        <div class="sec-title">난이도 고르기</div>
+        <div class="lvlist" id="dictLevels"></div>
+        <button class="startbtn" id="btnDictStart">🚀 받아쓰기 시작!</button>
+        <div class="dict-best" id="dictBest"></div>
+        <div class="tipbox">
+          10문제를 다 쓰면 성적표와 함께 <b>보너스 뼈다귀 🦴 3개</b>를 받아요.<br>
+          모르겠으면 <b>👀 힌트 살짝 보기</b>로 획순을 잠깐 볼 수 있어요.
+        </div>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -223,6 +376,20 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
   <div class="btns">
     <button class="a" id="cheerAgain">또 쓸래요</button>
     <button class="b" id="cheerNext">다음 글자 →</button>
+  </div>
+</div>
+
+<div id="report" hidden>
+  <div class="paper">
+    <div class="ph">받 아 쓰 기 성 적 표</div>
+    <div class="sc"><span id="rpScore">100</span><small>점</small></div>
+    <div class="stamp"><img src="img/childeuk.jpg" alt="도장">참 잘했어요</div>
+    <ul class="list" id="rpList"></ul>
+    <div class="bonus" id="rpBonus">🦴 뼈다귀 +3</div>
+    <div class="btns">
+      <button class="b" id="rpClose">그만하기</button>
+      <button class="a" id="rpAgain">한 번 더!</button>
+    </div>
   </div>
 </div>
 
@@ -478,63 +645,247 @@ var JAUM_NAMES = {'ㄱ':'기역','ㄲ':'쌍기역','ㄴ':'니은','ㄷ':'디귿'
   'ㅋ':'키읔','ㅌ':'티읕','ㅍ':'피읖','ㅎ':'히읗'};
 var MOEUM_SOUND = {'ㅏ':'아','ㅑ':'야','ㅓ':'어','ㅕ':'여','ㅗ':'오','ㅛ':'요','ㅜ':'우','ㅠ':'유','ㅡ':'으','ㅣ':'이','ㅐ':'애','ㅔ':'에'};
 
-var WORD_LIST = [
-  ['강','🌊'],['산','⛰️'],['달','🌙'],['별','⭐'],['눈','👀'],['손','✋'],['발','🦶'],['밥','🍚'],
-  ['물','💧'],['불','🔥'],['집','🏠'],['책','📚'],['꽃','🌸'],['꿈','💭'],['봄','🌷'],['곰','🐻'],
-  ['공','⚽'],['빵','🍞'],['옷','👕'],['빛','✨'],['밤','🌃'],['숲','🌲'],['말','🐴'],['입','👄'],
-  ['감','🍊'],['굴','🐚'],['길','🛣️'],['몸','💪'],['병','🍶'],['딸','👧'],['닭','🐔'],['값','💰'],['삶','🌱']
-];
+/* 테마 : [단어, 이모지, 테마, 예문] */
+var THEMES = {
+  fam:   { emoji:'👪', label:'가족·몸' },
+  animal:{ emoji:'🐶', label:'동물' },
+  food:  { emoji:'🍓', label:'음식' },
+  nature:{ emoji:'🌳', label:'자연' },
+  thing: { emoji:'🚗', label:'탈것·물건' },
+  etc:   { emoji:'✨', label:'느낌·생각' },
+  syl:   { emoji:'🔤', label:'낱자' }
+};
+var THEME_ORDER = ['fam','animal','food','nature','thing','etc','syl'];
+
+/* ---------- 쉬운 글자 (100) : 받침 없이 읽기 쉬운 낱말 ---------- */
 var EASY_LIST = [
-  ['아이','👶'],['아기','🍼'],['아빠','🧔'],['누나','👧'],['오빠','👦'],['이모','👩'],['고모','👩‍🦰'],['나','🙂'],
-  ['나비','🦋'],['나무','🌳'],['나라','🇰🇷'],['나이','🎂'],['다리','🦵'],['머리','💇'],['바다','🌊'],['바위','🪨'],
-  ['비누','🧼'],['비','🌧️'],['피','🩸'],['코','👃'],['무','🥬'],['새','🐦'],['배','🍐'],['개','🐶'],
-  ['소','🐄'],['차','🚗'],['파','🧅'],['이','🦷'],['노래','🎵'],['사자','🦁'],['여우','🦊'],['거미','🕷️'],
-  ['고래','🐋'],['고기','🍖'],['두부','🍲'],['포도','🍇'],['토끼','🐰'],['기차','🚂'],['지구','🌍'],['하마','🦛'],
-  ['파도','🏄'],['개미','🐜'],['새우','🍤'],['모자','🧢'],['미소','😊'],['모기','🦟'],['소라','🐚'],['시계','⏰'],
-  ['치즈','🧀'],['피자','🍕'],['자두','🍑'],['부채','🪭'],['수저','🥄'],['호수','🏞️'],['해','🌞'],['사과','🍎'],
-  ['치마','👗'],['게','🦀'],['코트','🧥'],['구두','👞'],['까치','🐦‍⬛'],['타조','🦤'],['쥐','🐭'],['체리','🍒'],
-  ['주스','🧃'],['과자','🍪'],['모래','🏖️'],['귀','👂'],['의자','🪑'],['가위','✂️'],['베개','🛏️'],['위','⬆️'],
-  ['왜','❓'],['오이','🥒'],['유리','🪟'],['우유','🥛'],['오리','🦆'],['의사','👨‍⚕️'],['세계','🌏'],['시소','🛝'],
-  ['미로','🌀'],['이유','💡'],['야구','⚾'],['요리','🍳'],['요요','🪀'],['재미','😄'],['지도','🗺️'],['커피','☕'],
-  ['노트','📓'],['가수','🎤'],['회사','🏢'],['네모','🔲'],['세모','🔺'],['도미','🐟'],['오후','🌤️'],['하루','📅'],
-  ['어제','🕰️'],['자주','🔁'],['모두','👐'],['사이','↔️']
+  /* 👪 가족·몸 */
+  ['아이','👶','fam','아이! 엄마 품에 쏙 안긴 아이'],
+  ['아기','🍼','fam','아기! 자글자글 웃는 아기'],
+  ['아빠','🧔','fam','아빠! 나를 번쩍 들어 주는 아빠'],
+  ['엄마','👩','fam','엄마! 나를 꼭 안아 주는 엄마'],
+  ['누나','👧','fam','누나! 같이 놀아 주는 누나'],
+  ['오빠','👦','fam','오빠! 장난꾸러기 오빠'],
+  ['이모','👩‍🦱','fam','이모! 손 흔들어 반기는 이모'],
+  ['고모','👩‍🦰','fam','고모! 맛있는 간식을 주는 고모'],
+  ['다리','🦵','fam','다리! 깡충깡충 뛰는 내 다리'],
+  ['머리','💇','fam','머리! 냄새 좋은 내 머리'],
+  ['코','👃','fam','코! 킁킁 냄새 맡는 코'],
+  ['귀','👂','fam','귀! 쫑긋 소리를 듣는 귀'],
+  ['이','🦷','fam','이! 하얗고 반짝이는 이'],
+  ['어깨','🙆','fam','어깨! 으쓱으쓱 들썩이는 어깨'],
+  ['손','✋','fam','손! 짝짝짝 박수 치는 손'],
+  ['발','🦶','fam','발! 동동 구르는 발'],
+  ['눈','👀','fam','눈! 초롱초롱 반짝이는 눈'],
+  ['입','👄','fam','입! 맛있게 냠냠 하는 입'],
+  ['얼굴','😊','fam','얼굴! 웃음이 반짝이는 내 얼굴'],
+  ['팔','💪','fam','팔! 힘차게 뻗는 내 팔'],
+  /* 🐶 동물 */
+  ['나비','🦋','animal','나비! 팔랑팔랑 날아가는 나비'],
+  ['고양이','🐱','animal','고양이! 야옹 하고 우는 고양이'],
+  ['강아지','🐶','animal','강아지! 꼬리 살랑살랑 강아지'],
+  ['토끼','🐰','animal','토끼! 깡충깡충 뛰는 토끼'],
+  ['사자','🦁','animal','사자! 어흥 하고 우는 사자'],
+  ['여우','🦊','animal','여우! 눈치 빠른 여우'],
+  ['거미','🕷️','animal','거미! 줄을 타는 거미'],
+  ['고래','🐋','animal','고래! 물을 뿌우 하고 내뿜는 고래'],
+  ['하마','🦛','animal','하마! 하품하는 하마'],
+  ['개미','🐜','animal','개미! 줄지어 가는 개미'],
+  ['새우','🍤','animal','새우! 통통 튀는 새우'],
+  ['모기','🦟','animal','모기! 앵앵 날아다니는 모기'],
+  ['오리','🦆','animal','오리! 꽥꽥 우는 오리'],
+  ['쥐','🐭','animal','쥐! 쪼르르 달아나는 쥐'],
+  ['게','🦀','animal','게! 옆으로 걷는 게'],
+  ['까치','🐦‍⬛','animal','까치! 깍깍 노래하는 까치'],
+  ['타조','🦤','animal','타조! 씽씽 달리는 타조'],
+  ['소','🐄','animal','소! 음매 하고 우는 소'],
+  ['개','🐕','animal','개! 멍멍 짖는 개'],
+  ['새','🐦','animal','새! 지저귀는 새'],
+  /* 🍓 음식 */
+  ['사과','🍎','food','사과! 아삭아삭 빨간 사과'],
+  ['포도','🍇','food','포도! 알알이 달콤한 포도'],
+  ['두부','🍲','food','두부! 몽글몽글한 두부'],
+  ['고기','🍖','food','고기! 맛있게 구운 고기'],
+  ['치즈','🧀','food','치즈! 쭉 늘어나는 치즈'],
+  ['피자','🍕','food','피자! 치즈가 듬뿍 피자'],
+  ['자두','🍑','food','자두! 새콤달콤 자두'],
+  ['체리','🍒','food','체리! 콕 집어 먹는 체리'],
+  ['주스','🧃','food','주스! 시원한 주스'],
+  ['과자','🍪','food','과자! 오도독오도독 과자'],
+  ['오이','🥒','food','오이! 아삭아삭 오이'],
+  ['우유','🥛','food','우유! 따끈한 우유'],
+  ['밥','🍚','food','밥! 따뜻한 밥'],
+  ['빵','🍞','food','빵! 폭신폭신 빵'],
+  ['콩','🫘','food','콩! 통통 튀는 콩'],
+  ['만두','🥟','food','만두! 김 나는 만두'],
+  ['파','🧅','food','파! 파릇파릇 파'],
+  ['무','🥬','food','무! 곱게 썬 무'],
+  ['감','🍊','food','감! 달콤한 감'],
+  ['딸기','🍓','food','딸기! 빨갛게 익은 딸기'],
+  /* 🌳 자연 */
+  ['나무','🌳','nature','나무! 쭉쭉 자라는 나무'],
+  ['바다','🌊','nature','바다! 파란 바다'],
+  ['바위','🪨','nature','바위! 우뚝 선 바위'],
+  ['파도','🏄','nature','파도! 철썩철썩 파도'],
+  ['호수','🏞️','nature','호수! 고요한 호수'],
+  ['해','🌞','nature','해! 아침에 뜨는 해'],
+  ['모래','🏖️','nature','모래! 사락사락 모래'],
+  ['꽃','🌸','nature','꽃! 활짝 핀 꽃'],
+  ['숲','🌲','nature','숲! 초록빛 숲'],
+  ['산','⛰️','nature','산! 높이 솟은 산'],
+  ['달','🌙','nature','달! 밤하늘의 달'],
+  ['별','⭐','nature','별! 반짝반짝 별'],
+  ['하늘','🌤️','nature','하늘! 맑고 파란 하늘'],
+  ['구름','☁️','nature','구름! 뭉게뭉게 구름'],
+  ['무지개','🌈','nature','무지개! 일곱 빛깔 무지개'],
+  ['바람','🍃','nature','바람! 살랑살랑 바람'],
+  ['잔디','🌿','nature','잔디! 폭신폭신 잔디'],
+  ['봄','🌷','nature','봄! 꽃이 피는 봄'],
+  ['불','🔥','nature','불! 따뜻한 불'],
+  ['물','💧','nature','물! 졸졸졸 물'],
+  /* 🚗 탈것·물건 */
+  ['차','🚗','thing','차! 부릉부릉 달리는 차'],
+  ['기차','🚂','thing','기차! 칙칙폭폭 기차'],
+  ['모자','🧢','thing','모자! 고깔고깔 모자'],
+  ['시계','⏰','thing','시계! 째깍째깍 시계'],
+  ['부채','🪭','thing','부채! 부채질하는 부채'],
+  ['치마','👗','thing','치마! 팔랑팔랑 치마'],
+  ['코트','🧥','thing','코트! 따뜻한 코트'],
+  ['구두','👞','thing','구두! 또각또각 구두'],
+  ['의자','🪑','thing','의자! 앉아 쉬는 의자'],
+  ['가위','✂️','thing','가위! 싹둑싹둑 가위'],
+  ['베개','🛏️','thing','베개! 보들보들 베개'],
+  ['유리','🪟','thing','유리! 뽀득뽀득 유리창'],
+  ['시소','🛝','thing','시소! 위아래로 오르는 시소'],
+  ['노트','📓','thing','노트! 글씨 쓰는 노트'],
+  ['지도','🗺️','thing','지도! 우리 동네 지도'],
+  ['요요','🪀','thing','요요! 올라갔다 내려오는 요요'],
+  ['수저','🥄','thing','수저! 밥 먹는 수저'],
+  ['비누','🧼','thing','비누! 보글보글 비누'],
+  ['피리','🪈','thing','피리! 하늘하늘 피리'],
+  ['우산','☂️','thing','우산! 촉촉한 우산']
 ];
-/* 조금 더 연습 : 쌍자음·복합모음 낱자 + 아주 쉬운 ㅇ·ㄴ 받침 입문 */
+/* ---------- 조금 더 연습 : 쌍자음·복합모음 낱자 + 받침 입문 낱말 ---------- */
 var PRACTICE_LIST = [
-  ['까',''],['꼬',''],['끼',''],['따',''],['떼',''],['또',''],['빠',''],['뽀',''],['싸',''],
-  ['씨',''],['짜',''],['쪼',''],['왜',''],['외',''],['위',''],['의',''],['와',''],['워',''],
-  ['방','🏠'],['종','🔔'],['콩','🫘'],['땅','🌏'],['공룡','🦕'],['문','🚪'],['반','🍚'],['돈','💰'],
-  ['잔','🥤'],['단추','🔘'],['안경','👓'],['인형','🧸'],['만두','🥟'],['왕','👑'],['냄비','🍲'],['잔디','🌿']
+  ['까','','syl','까! 까만 까치가 깍깍'],
+  ['꼬','','syl','꼬! 꼬불꼬불 꼬리'],
+  ['끼','','syl','끼! 끼익끼익 미끄럼틀'],
+  ['따','','syl','따! 따끈따끈 국물'],
+  ['떼','','syl','떼! 떼굴떼굴 굴러가요'],
+  ['또','','syl','또! 또 하고 싶은 놀이'],
+  ['빠','','syl','빠! 빠르게 달려요'],
+  ['뽀','','syl','뽀! 뽀송뽀송 빨래'],
+  ['싸','','syl','싸! 사이좋게 지내요'],
+  ['씨','','syl','씨! 씨앗을 심어요'],
+  ['짜','','syl','짜! 짜잔, 깜짝 선물'],
+  ['쪼','','syl','쪼! 쪼르르 흐르는 물'],
+  ['왜','','syl','왜? 왜 그런지 물어봐요'],
+  ['외','','syl','외! 외로운 건 싫어요'],
+  ['위','','syl','위! 위로 올라가요'],
+  ['의','','syl','의! 의자가 의젓해요'],
+  ['와','','syl','와! 와, 신난다'],
+  ['워','','syl','워! 워워, 천천히'],
+  ['방','🏠','thing','방! 내가 자는 방'],
+  ['문','🚪','thing','문! 여닫는 문'],
+  ['돈','💰','thing','돈! 저금하는 돈'],
+  ['단추','🔘','thing','단추! 옷에 다는 단추'],
+  ['안경','👓','thing','안경! 동그란 안경'],
+  ['인형','🧸','thing','인형! 안아 주는 인형'],
+  ['왕','👑','thing','왕! 왕관 쓴 왕'],
+  ['종','🔔','thing','종! 딸랑딸랑 종'],
+  ['자전거','🚲','thing','자전거! 씽씽 달리는 자전거'],
+  ['잔','🥤','food','잔! 물을 담는 잔'],
+  ['김밥','🍙','food','김밥! 돌돌 만 김밥'],
+  ['냄비','🍲','food','냄비! 보글보글 냄비'],
+  ['콩나물','🌱','food','콩나물! 아삭아삭 콩나물'],
+  ['할머니','👵','fam','할머니! 다정한 할머니'],
+  ['동생','👶','fam','동생! 내가 챙겨 주는 동생'],
+  ['친구','🫂','fam','친구! 손잡고 노는 친구'],
+  ['땅','🌍','nature','땅! 발로 밟는 땅'],
+  ['달빛','🌜','nature','달빛! 은은한 달빛'],
+  ['공룡','🦕','animal','공룡! 크르릉 공룡'],
+  ['병아리','🐤','animal','병아리! 삐약삐약 병아리']
+];
+/* ---------- 받침 글자 ---------- */
+var WORD_LIST = [
+  ['강','🌊','nature','강! 물이 졸졸 흐르는 파란 강'],
+  ['밤','🌃','nature','밤! 별이 빛나는 밤'],
+  ['빛','✨','nature','빛! 반짝반짝 빛'],
+  ['길','🛣️','nature','길! 쭉 뻗은 길'],
+  ['돌','🪨','nature','돌! 동글동글 돌'],
+  ['흙','🌱','nature','흙! 보슬보슬 흙'],
+  ['잎','🍃','nature','잎! 파릇파릇 잎'],
+  ['낮','🌞','nature','낮! 햇살이 환한 낮'],
+  ['솔','🌲','nature','솔! 삐죽삐죽 솔잎'],
+  ['몸','💪','fam','몸! 쑥쑥 자라는 내 몸'],
+  ['딸','👧','fam','딸! 엄마의 사랑스러운 딸'],
+  ['아들','👦','fam','아들! 씩씩한 아들'],
+  ['형','👦','fam','형! 나를 챙겨 주는 형'],
+  ['뺨','😊','fam','뺨! 발그레한 뺨'],
+  ['턱','🙂','fam','턱! 괜히 대 보는 턱'],
+  ['곰','🐻','animal','곰! 꿀을 좋아하는 곰'],
+  ['말','🐴','animal','말! 다그닥 달리는 말'],
+  ['닭','🐔','animal','닭! 꼬꼬댁 우는 닭'],
+  ['뱀','🐍','animal','뱀! 스르르 기어가는 뱀'],
+  ['사슴','🦌','animal','사슴! 쫑긋귀 사슴'],
+  ['용','🐉','animal','용! 하늘을 나는 용'],
+  ['국','🍲','food','국! 뜨끈한 국'],
+  ['떡','🍡','food','떡! 쫀득쫀득 떡'],
+  ['김','🍙','food','김! 바삭바삭 김'],
+  ['잼','🍯','food','잼! 달콤한 잼'],
+  ['귤','🍊','food','귤! 새콤달콤 귤'],
+  ['잣','🌰','food','잣! 고소한 잣'],
+  ['집','🏠','thing','집! 따뜻한 우리 집'],
+  ['책','📚','thing','책! 재미있는 책'],
+  ['옷','👕','thing','옷! 따뜻한 옷'],
+  ['공','⚽','thing','공! 데굴데굴 공'],
+  ['병','🍶','thing','병! 반짝반짝 병'],
+  ['값','💰','thing','값! 물건의 값'],
+  ['컵','🥛','thing','컵! 물을 담는 컵'],
+  ['가방','🎒','thing','가방! 메고 다니는 가방'],
+  ['꿈','💭','etc','꿈! 간직하고 싶은 꿈'],
+  ['맛','😋','etc','맛! 맛있는 맛'],
+  ['삶','🌱','etc','삶! 소중한 삶']
 ];
 
 var TABS = [
-  { id:'basic', label:'자음·모음', items: function(){
-      var a = CHO.map(function(c){ return {ch:c, name:JAUM_NAMES[c], emoji:''}; });
-      var b = Object.keys(MOEUM_SOUND).map(function(v){ return {ch:v, name:MOEUM_SOUND[v], emoji:''}; });
-      return a.concat(b);
-    }},
-  { id:'easy', label:'쉬운 글자', items: function(){
-      return EASY_LIST.map(function(w){ return {ch:w[0], name:'', emoji:w[1]}; });
-    }},
-  { id:'practice', label:'조금 더 연습', items: function(){
-      return PRACTICE_LIST.map(function(w){ return {ch:w[0], name:'', emoji:w[1]}; });
-    }},
-  { id:'word', label:'받침 글자', items: function(){
-      return WORD_LIST.map(function(w){ return {ch:w[0], name:'', emoji:w[1]}; });
-    }},
-  { id:'star', label:'⭐ 출석·스티커', items: [] }
+  { id:'basic', label:'자음·모음', kind:'jamo' },
+  { id:'easy', label:'쉬운 글자', kind:'words' },
+  { id:'practice', label:'조금 더 연습', kind:'words' },
+  { id:'word', label:'받침 글자', kind:'words' },
+  { id:'pet', label:'🐶 칠뜩이', kind:'pet' },
+  { id:'dict', label:'📝 받아쓰기', kind:'dict' },
+  { id:'star', label:'⭐ 출석·스티커', kind:'star' }
 ];
+function mkItem(a){ return { ch:a[0], emoji:a[1], theme:a[2], say:a[3] }; }
+var POOLS = { easy:EASY_LIST.map(mkItem), practice:PRACTICE_LIST.map(mkItem), word:WORD_LIST.map(mkItem) };
+function basicItems(){
+  var a = CHO.map(function(c){ return {ch:c, name:JAUM_NAMES[c], emoji:'', theme:'syl', say:JAUM_NAMES[c]}; });
+  var b = Object.keys(MOEUM_SOUND).map(function(v){ return {ch:v, name:MOEUM_SOUND[v], emoji:'', theme:'syl', say:MOEUM_SOUND[v]}; });
+  return a.concat(b);
+}
+function tabItems(id){
+  if(id === 'basic') return basicItems();
+  return POOLS[id] || [];
+}
 
 /* =====================================================================
    5. 상태 · 저장
    ===================================================================== */
 var KEY = 'yoonseo-hangul-v1';
-var data = { total:0, done:{}, days:{} };
+var data = { total:0, done:{}, days:{}, bones:0, dictRuns:0, pet:{ fed:0, full:30, happy:50, day:'', dayFed:0 } };
 try {
   var raw = localStorage.getItem(KEY);
   if(raw){
     var o = JSON.parse(raw);
-    data = { total:o.total||0, done:o.done||{}, days:o.days||{} };
+    data.total = o.total || 0;
+    data.done = o.done || {};
+    data.days = o.days || {};
+    data.bones = o.bones || 0;
+    data.dictRuns = o.dictRuns || 0;
+    if(o.pet){
+      data.pet = { fed:o.pet.fed||0, full:(o.pet.full==null?30:o.pet.full), happy:(o.pet.happy==null?50:o.pet.happy), day:o.pet.day||'', dayFed:o.pet.dayFed||0 };
+    }
   }
 } catch(e){}
 function save(){
@@ -543,6 +894,11 @@ function save(){
 function pad2(n){ return (n < 10 ? '0' : '') + n; }
 function ymd(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
 function todayKey(){ return ymd(new Date()); }
+function petToday(){
+  if(!data.pet) data.pet = { fed:0, full:30, happy:50, day:'', dayFed:0 };
+  if(data.pet.day !== todayKey()){ data.pet.day = todayKey(); data.pet.dayFed = 0; }
+  return data.pet;
+}
 function dayRec(key){
   if(!data.days[key]) data.days[key] = { n:0, chars:{} };
   if(!data.days[key].chars) data.days[key].chars = {};
@@ -575,24 +931,32 @@ var bubble = document.getElementById('bubble');
 var viewList = document.getElementById('viewList');
 var viewWrite = document.getElementById('viewWrite');
 var viewStar = document.getElementById('viewStar');
+var viewPet = document.getElementById('viewPet');
+var viewDict = document.getElementById('viewDict');
 var cardGrid = document.getElementById('cardGrid');
 var starGrid = document.getElementById('starGrid');
 var starEmpty = document.getElementById('starEmpty');
 var starTotalEl = document.getElementById('starTotal');
+var boneTotalEl = document.getElementById('boneTotal');
 var wLetter = document.getElementById('wLetter');
 var wParts = document.getElementById('wParts');
+var wSay = document.getElementById('wSay');
 var wProg = document.getElementById('wProg');
 var btnPrev = document.getElementById('btnPrev');
 var btnNext = document.getElementById('btnNext');
+var themeBar = document.getElementById('themeBar');
+var dictDots = document.getElementById('dictDots');
 
-var curTab = 'jaum';
+var curTab = 'basic';
 var curList = [];
 var curIndex = -1;
+var themeSel = 'all';
 var model = null;
 var attempt = null;
 var animating = false, demoIndex = -1, demoProgress = 0;
 var guideOn = true;
-var bubbleTimer = null, cheerTimer = null;
+var bubbleTimer = null, cheerTimer = null, sayTimer = null, dictTimer = null;
+var dict = { on:false, level:'easy', list:[], i:0, results:[], hints:0, hintUntil:0, warned:0, bonus:0 };
 
 /* =====================================================================
    7. 탭 · 목록 렌더
@@ -608,15 +972,20 @@ function renderTabs(){
     nav.appendChild(b);
   });
 }
+function tabMeta(id){
+  return TABS.filter(function(t){ return t.id === id; })[0] || TABS[0];
+}
 function gotoTab(id){
+  var same = (id === curTab);
   curTab = id;
+  if(dict.on && id !== 'dict') dict.on = false;
   renderTabs();
-  if(id === 'star'){
-    showView('star');
-    renderSticker();
-    return;
-  }
-  curList = TABS.filter(function(t){ return t.id === id; })[0].items();
+  if(id === 'star'){ showView('star'); renderSticker(); return; }
+  if(id === 'pet'){ showView('pet'); renderPet(); return; }
+  if(id === 'dict'){ showView('dict'); renderDictHome(); return; }
+  curList = tabItems(id);
+  if(!same) themeSel = 'all';
+  renderThemeBar();
   renderCards();
   showView('list');
 }
@@ -624,8 +993,35 @@ function showView(name){
   viewList.hidden = name !== 'list';
   viewWrite.hidden = name !== 'write';
   viewStar.hidden = name !== 'star';
+  viewPet.hidden = name !== 'pet';
+  viewDict.hidden = name !== 'dict';
   var s = document.getElementById('summary');
-  if(s) s.hidden = (name === 'write');
+  if(s) s.hidden = (name === 'write' || name === 'dict');
+}
+function renderThemeBar(){
+  if(!themeBar) return;
+  var seen = {}, kinds = 0;
+  curList.forEach(function(it){ if(!seen[it.theme]){ seen[it.theme] = 1; kinds++; } });
+  if(curTab === 'basic' || kinds < 2){ themeBar.hidden = true; themeBar.innerHTML = ''; return; }
+  var html = '<button class="thchip' + (themeSel === 'all' ? ' on' : '') + '" data-th="all">🌈 전체</button>';
+  THEME_ORDER.forEach(function(k){
+    if(!seen[k]) return;
+    var t = THEMES[k] || { emoji:'', label:k };
+    html += '<button class="thchip' + (themeSel === k ? ' on' : '') + '" data-th="' + k + '"><span class="te">' + t.emoji + '</span> ' + t.label + '</button>';
+  });
+  themeBar.hidden = false;
+  themeBar.innerHTML = html;
+  for(var i = 0; i < themeBar.children.length; i++){
+    (function(btn){
+      btn.addEventListener('click', function(){
+        sfx('tap');
+        themeSel = btn.getAttribute('data-th');
+        renderThemeBar(); renderCards();
+        var sc = viewList.querySelector('.scroll');
+        if(sc) sc.scrollTop = 0;
+      });
+    })(themeBar.children[i]);
+  }
 }
 function starBadge(ch){
   var n = data.done[ch] || 0;
@@ -633,17 +1029,23 @@ function starBadge(ch){
 }
 function renderCards(){
   cardGrid.innerHTML = '';
-  curList.forEach(function(it, i){
+  var list = curList.filter(function(it){ return themeSel === 'all' || it.theme === themeSel; });
+  list.forEach(function(it){
+    var idx = curList.indexOf(it);
     var el = document.createElement('button');
     el.className = 'card';
+    el.id = 'card-' + idx;
     el.innerHTML =
       (starBadge(it.ch) ? '<span class="b">' + starBadge(it.ch) + '</span>' : '') +
       '<div class="g">' + it.ch + '</div>' +
       '<div class="e">' + (it.emoji || '') + '</div>' +
-      '<div class="n">' + (it.name || '&nbsp;') + '</div>';
-    el.addEventListener('click', function(){ openLetter(i); });
+      '<div class="n">' + (it.name || it.say || '&nbsp;') + '</div>';
+    el.addEventListener('click', function(){ sfx('tap'); openLetter(idx); });
     cardGrid.appendChild(el);
   });
+  if(!list.length){
+    cardGrid.innerHTML = '<div class="empty" style="grid-column:1/-1">여기에는 아직 낱말이 없어요.</div>';
+  }
 }
 function renderSticker(){
   starTotalEl.textContent = data.total;
@@ -655,9 +1057,8 @@ function renderSticker(){
   renderCal();
 
   var all = [], seen = {};
-  TABS.forEach(function(t){
-    if(t.id === 'star') return;
-    t.items().forEach(function(it){
+  ['basic','easy','practice','word'].forEach(function(id){
+    tabItems(id).forEach(function(it){
       var n = data.done[it.ch];
       if(n && !seen[it.ch]){ seen[it.ch] = 1; all.push({ch:it.ch, n:n, emoji:it.emoji}); }
     });
@@ -719,6 +1120,14 @@ function updateSummary(){
     ? '오늘: ' + keys.slice(0, 5).join(' ') + (keys.length > 5 ? ' 외 ' + (keys.length - 5) + '자' : '')
     : '오늘 쓴 글자: 아직 없어요';
   starTotalEl.textContent = data.total;
+  paintBones();
+}
+function paintBones(){
+  if(boneTotalEl) boneTotalEl.textContent = data.bones || 0;
+  var a = document.getElementById('petBones');
+  if(a) a.textContent = data.bones || 0;
+  var b = document.getElementById('petTodayFed');
+  if(b) b.textContent = petToday().dayFed;
 }
 
 /* =====================================================================
@@ -759,6 +1168,8 @@ function buildWord(word){
 }
 function openLetter(i){
   if(i < 0 || i >= curList.length) return;
+  dict.on = false;
+  setDictChrome(false);
   curIndex = i;
   var it = curList[i];
   var w = buildWord(it.ch);
@@ -769,11 +1180,18 @@ function openLetter(i){
   animating = false; demoIndex = -1; demoProgress = 0;
   wLetter.textContent = it.ch;
   wParts.textContent = partLabel(it.ch) || it.name || '';
+  wSay.textContent = it.say || '';
   showView('write');
   btnPrev.disabled = i <= 0;
   btnNext.disabled = i >= curList.length - 1;
   updateProgress();
   requestAnimationFrame(function(){ fitCanvas(); });
+  clearTimeout(sayTimer);
+  sayTimer = setTimeout(function(){ speak(it.say || letterSpeech()); }, 420);
+}
+function currentItem(){
+  if(dict.on) return dict.list[dict.i] || null;
+  return curList[curIndex] || null;
 }
 function updateProgress(){
   if(!model) return;
@@ -801,6 +1219,7 @@ function render(){
   ctx.clearRect(0, 0, W, W);
   if(!model) return;
   var k = W / 1000;
+  var dictFaint = dict.on && !dictHintOn();
   ctx.setTransform(k, 0, 0, k, 0, 0);
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
@@ -826,12 +1245,26 @@ function render(){
 
   for(var i=0;i<model.strokes.length;i++){
     var st = model.strokes[i];
-    if(animating){
+    if(i < model.idx){
+      drawStroke(st.pts, st.lw, '#FF7FA3');
+    } else if(dictFaint){
+      /* 받아쓰기 : 아직 써야 할 획은 아주 흐린 점선으로만 */
+      ctx.save();
+      ctx.setLineDash([9, 14]);
+      ctx.lineWidth = Math.max(3, st.lw * 0.34);
+      ctx.strokeStyle = '#F2E5D8';
+      ctx.beginPath();
+      ctx.moveTo(st.pts[0][0], st.pts[0][1]);
+      for(var q=1;q<st.pts.length;q++) ctx.lineTo(st.pts[q][0], st.pts[q][1]);
+      ctx.stroke();
+      ctx.restore();
+      ctx.beginPath();
+      ctx.arc(st.pts[0][0], st.pts[0][1], Math.max(8, st.lw * 0.26), 0, Math.PI*2);
+      ctx.fillStyle = '#F1E2D3'; ctx.fill();
+    } else if(animating){
       if(i < demoIndex){ drawStroke(st.pts, st.lw, '#FF95B4'); }
       else if(i === demoIndex){ drawStroke(sliceStroke(st, demoProgress), st.lw, '#FF95B4'); }
       else { drawStroke(st.pts, st.lw, '#EFDFCF'); }
-    } else if(i < model.idx){
-      drawStroke(st.pts, st.lw, '#FF7FA3');
     } else {
       drawStroke(st.pts, st.lw, '#EFDFCF');
     }
@@ -843,7 +1276,7 @@ function render(){
     ctx.fillStyle = '#F2608A'; ctx.fill();
   }
 
-  if(!animating){
+  if(!animating && !dictFaint){
     var cur = model.strokes[model.idx];
     if(cur){
       ctx.save();
@@ -1075,6 +1508,26 @@ function requestRender(){
 /* =====================================================================
    11. 완성 · 축하
    ===================================================================== */
+function addBones(n){
+  data.bones = Math.max(0, (data.bones || 0) + n);
+  save();
+  paintBones();
+}
+function boneFloat(n){
+  var el = document.getElementById('bonePlus');
+  if(!el) return;
+  el.textContent = n > 0 ? '🦴 +' + n : '🦴 0';
+  el.classList.remove('go');
+  void el.offsetWidth;
+  el.classList.add('go');
+}
+function petHop(big){
+  var el = document.getElementById('stagePet');
+  if(!el) return;
+  el.classList.remove('hop');
+  void el.offsetWidth;
+  el.classList.add('hop');
+}
 function completeLetter(){
   var ch = model.word;
   data.total = (data.total || 0) + 1;
@@ -1086,10 +1539,25 @@ function completeLetter(){
   starTotalEl.textContent = data.total;
   updateSummary();
   sfx('win');
-  speak(ch);
+  petHop();
+
+  /* 📝 받아쓰기 : 한 문제를 끝냈으면 다음 문제로 */
+  if(dict.on){
+    dict.results.push({ ch:ch, say:(dict.list[dict.i] || {}).say || ch });
+    renderDictDots();
+    clearTimeout(dictTimer);
+    dictTimer = setTimeout(nextDictQuestion, 1050);
+    toast('잘 썼어요! 다음 문제로 갈까요?');
+    speak('잘했어요');
+    return;
+  }
+
+  addBones(1);
+  boneFloat(1);
+  speak(ch + '! 참 잘했어요');
   clearTimeout(cheerTimer);
   var cheer = document.getElementById('cheer');
-  document.getElementById('cheerPlus').textContent = '⭐ 별 스티커 +1  (모두 ' + data.total + '개)';
+  document.getElementById('cheerPlus').textContent = '⭐ 별 스티커 +1 · 🦴 뼈다귀 +1  (모두 ' + data.total + '개)';
   cheer.hidden = false;
   confetti();
   var last = curIndex >= curList.length - 1;
@@ -1154,6 +1622,7 @@ function sfx(kind){
   else if(kind === 'stroke'){ tone(784, 0.10, 0, 0.10, 'sine'); tone(1046, 0.12, 0.05, 0.07, 'sine'); }
   else if(kind === 'warn'){ tone(300, 0.13, 0, 0.07, 'triangle'); }
   else if(kind === 'win'){ [523,659,784,1046].forEach(function(f,i){ tone(f, 0.28, i*0.09, 0.12, 'sine'); }); }
+  else if(kind === 'munch'){ tone(190, 0.07, 0, 0.11, 'square'); tone(150, 0.08, 0.07, 0.10, 'square'); tone(330, 0.06, 0.15, 0.06, 'triangle'); }
   else if(kind === 'tap'){ tone(520, 0.06, 0, 0.05, 'sine'); }
 }
 
@@ -1243,45 +1712,72 @@ function penLoop(){
    --------------------------------------------------------------- */
 var BGM_KEY = 'yoonseo-hangul-bgm';
 var SONG = {
-  bpm: 68, bars: 16,
-  /* [시작박, midi, 길이(박), 세기] */
-  mel: [
-    [0,76,1,1],[1,79,1,1],[2,81,2,1],
-    [4,79,2,.95],[6,76,2,.9],
-    [8,74,1,.9],[9,76,1,1],[10,79,2,1],
-    [12,76,1,.85],[13,74,1,.85],[14,72,2,1],
-    [16,72,1,.9],[17,74,1,.95],[18,76,2,1],
-    [20,79,1,.95],[21,81,1,1],[22,79,2,1],
-    [24,76,1,.9],[25,74,1,.9],[26,79,2,1],
-    [28,72,4,.9],
-    [32,81,1,1],[33,79,1,.95],[34,76,2,1],
-    [36,74,2,.95],[38,76,2,1],
-    [40,79,1,1],[41,76,1,.9],[42,74,2,.9],
-    [44,72,2,1],[46,74,2,.9],
-    [48,76,1,.95],[49,79,1,1],[50,81,2,1],
-    [52,84,1,1],[53,81,1,.9],[54,79,2,1],
-    [56,76,2,.95],[58,74,1,.9],[59,72,1,.9],
-    [60,72,4,.85]
-  ],
-  bass: [
-    [0,48,4],[4,45,4],[8,41,4],[12,48,4],
-    [16,48,4],[20,45,4],[24,43,4],[28,48,4],
-    [32,41,4],[36,43,4],[40,45,4],[44,41,4],
-    [48,48,4],[52,45,4],[56,43,4],[60,48,4]
-  ],
-  fifth: [
-    [2,55],[6,52],[10,48],[14,55],
-    [18,55],[22,52],[26,50],[30,55],
-    [34,48],[38,50],[42,52],[46,48],
-    [50,55],[54,52],[58,50],[62,55]
-  ],
-  spark: [
-    [30,84,.55],[30.5,88,.5],[31,91,.48],
-    [62,88,.5],[62.5,91,.45],[63,96,.4]
-  ]
+  bpm: 104, bars: 16,
+  /* 8분음표 한 칸씩 : 음이름, '-' 쉼표, '~' 앞 음 늘리기, '|' 마디 */
+  melStr: [
+    'C5 E5 G5 E5 C5 E5 G5 A5',
+    'G5 F5 D5 B4 D5 F5 G5 ~',
+    'A5 G5 E5 C5 E5 G5 A5 ~',
+    'F5 E5 D5 C5 A4 ~ ~ ~',
+    'E5 G5 C6 G5 E5 G5 A5 C6',
+    'A5 G5 F5 D5 F5 A5 G5 ~',
+    'G5 A5 B5 G5 D5 E5 F5 D5',
+    'C5 E5 G5 C6 ~ ~ ~ ~',
+    'F5 A5 C6 A5 G5 F5 D5 ~',
+    'E5 G5 C6 G5 E5 D5 C5 ~',
+    'D5 G5 B5 G5 A5 B5 C6 ~',
+    'G5 E5 C6 G5 E5 C5 ~ ~',
+    'A5 G5 E5 C5 A4 C5 E5 ~',
+    'F5 E5 F5 A5 G5 F5 D5 ~',
+    'G5 F5 E5 D5 B4 D5 G5 ~',
+    'C5 E5 G5 C6 ~ ~ ~ ~'
+  ].join(' | '),
+  chords: ['C','G','Am','F','C','F','G','C','F','C','G','C','Am','F','G','C'],
+  chordTones: { C:[60,64,67], G:[59,62,67], Am:[57,60,64], F:[57,60,65] },
+  bassRoot: { C:36, G:43, Am:45, F:41 }
 };
+var NOTE_PC = { C:0, D:2, E:4, F:5, G:7, A:9, B:11 };
+function noteMidi(tok){
+  var m = /^([A-G])(#?)([0-9])$/.exec(tok);
+  if(!m) return null;
+  return (parseInt(m[3], 10) + 1) * 12 + NOTE_PC[m[1]] + (m[2] ? 1 : 0);
+}
+function parseTune(str){
+  var out = [], beat = 0;
+  str.split(/\s+/).forEach(function(tok){
+    if(!tok || tok === '|') return;
+    if(tok === '-'){ beat += 0.5; return; }
+    if(tok === '~'){
+      if(out.length) out[out.length - 1][2] += 0.5;
+      beat += 0.5; return;
+    }
+    var midi = noteMidi(tok);
+    if(midi != null) out.push([beat, midi, 0.5]);
+    beat += 0.5;
+  });
+  return out;
+}
+SONG.mel = parseTune(SONG.melStr);
+SONG.bass = [];
+SONG.harm = [];
+SONG.bell = [];
+(function(){
+  for(var b = 0; b < SONG.bars; b++){
+    var name = SONG.chords[b], root = SONG.bassRoot[name], beat0 = b * 4;
+    [0, 1, 2, 3].forEach(function(pos){
+      SONG.bass.push([beat0 + pos, root + (pos % 2 ? 7 : 0), 0.42]);
+    });
+    [1, 3].forEach(function(pos){
+      SONG.chordTones[name].forEach(function(m){ SONG.harm.push([beat0 + pos, m, 0.26]); });
+    });
+    if(b % 2 === 0){
+      var tones = SONG.chordTones[name];
+      SONG.bell.push([beat0 + 3.5, tones[tones.length - 1] + 12, 0.55]);
+    }
+  }
+})();
 var BGM_LEVEL = 0.92;   /* 배경음 전체 볼륨 */
-var bgm = { on:true, gain:null, timer:null, next:0, beat:0, playing:false, spb:60/68 };
+var bgm = { on:true, gain:null, timer:null, next:0, beat:0, playing:false, spb:60/104 };
 try { bgm.on = (localStorage.getItem(BGM_KEY) !== 'off'); } catch(e){}
 function bgmSave(){ try { localStorage.setItem(BGM_KEY, bgm.on ? 'on' : 'off'); } catch(e){} }
 function bgmInit(){
@@ -1295,42 +1791,57 @@ function bgmInit(){
   }
   return true;
 }
-function bgmNote(t, midi, dur, vol, bright){
+function midiFreq(m){ return 440 * Math.pow(2, (m - 69) / 12); }
+function bgmVoice(t, f, dur, vol, type, shimmer){
   var a = ac;
   if(!a || !bgm.gain) return;
-  var f = 440 * Math.pow(2, (midi - 69) / 12);
   var g = a.createGain();
   g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), t + 0.01);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), t + 0.008);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   g.connect(bgm.gain);
-  var o1 = a.createOscillator();
-  o1.type = 'triangle'; o1.frequency.setValueAtTime(f, t);
-  var o2 = a.createOscillator();
-  o2.type = 'sine'; o2.frequency.setValueAtTime(f * 2, t);
-  var g2 = a.createGain(); g2.gain.value = (bright == null ? 0.2 : bright);
-  o1.connect(g);
-  o2.connect(g2); g2.connect(g);
-  o1.start(t); o1.stop(t + dur + 0.05);
-  o2.start(t); o2.stop(t + dur + 0.05);
+  var o = a.createOscillator();
+  o.type = type || 'triangle';
+  o.frequency.setValueAtTime(f, t);
+  o.connect(g);
+  o.start(t); o.stop(t + dur + 0.04);
+  if(shimmer){
+    var o2 = a.createOscillator();
+    o2.type = 'sine';
+    o2.frequency.setValueAtTime(f * shimmer, t);
+    var g2 = a.createGain();
+    g2.gain.setValueAtTime(0.0001, t);
+    g2.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol * 0.22), t + 0.006);
+    g2.gain.exponentialRampToValueAtTime(0.0001, t + Math.min(0.13, dur));
+    o2.connect(g2); g2.connect(g);
+    o2.start(t); o2.stop(t + 0.18);
+  }
+}
+function bgmMarimba(t, midi, dur, vol){ bgmVoice(t, midiFreq(midi), dur, vol, 'triangle', 4); }
+function bgmBass(t, midi, dur, vol){ bgmVoice(t, midiFreq(midi), dur, vol, 'triangle', 2); }
+function bgmChord(t, midi, dur, vol){ bgmVoice(t, midiFreq(midi), dur, vol, 'triangle', 3); }
+function bgmBell(t, midi, dur, vol){
+  var f = midiFreq(midi);
+  bgmVoice(t, f, dur, vol, 'sine', 2);
+  bgmVoice(t, f * 3, dur * 0.45, vol * 0.32, 'sine', 0);
 }
 function bgmScheduleBeat(beat, t){
-  var spb = bgm.spb, i, n;
+  var i, n;
   for(i = 0; i < SONG.mel.length; i++){
     n = SONG.mel[i];
-    if(n[0] === beat) bgmNote(t, n[1], Math.max(0.95, n[2] * spb * 1.3), 0.115 * (n[3] || 1), 0.22);
+    if(n[0] === beat) bgmMarimba(t, n[1], Math.max(0.22, n[2] * bgm.spb * 1.45), 0.118);
   }
   for(i = 0; i < SONG.bass.length; i++){
     n = SONG.bass[i];
-    if(n[0] === beat) bgmNote(t, n[1], 3.2, 0.085, 0.05);
+    if(n[0] === beat) bgmBass(t, n[1], Math.max(0.2, n[2] * bgm.spb), 0.10);
   }
-  for(i = 0; i < SONG.fifth.length; i++){
-    n = SONG.fifth[i];
-    if(n[0] === beat) bgmNote(t, n[1], 1.8, 0.042, 0.04);
+  for(i = 0; i < SONG.harm.length; i++){
+    n = SONG.harm[i];
+    if(n[0] === beat) bgmChord(t, n[1], 0.3, 0.03);
   }
-  for(i = 0; i < SONG.spark.length; i++){
-    n = SONG.spark[i];
-    if(n[0] === beat) bgmNote(t, n[1], 1.6, 0.07 * (n[2] || 1), 0.3);
+  for(i = 0; i < SONG.bell.length; i++){
+    n = SONG.bell[i];
+    if(n[0] === beat) bgmBell(t, n[1], 0.6, 0.052);
   }
 }
 var BGM_GRID = 0.5;
@@ -1513,6 +2024,262 @@ function playDemo(){
 }
 
 /* =====================================================================
+   13.5  🐶 칠뜩이 펫방
+   ===================================================================== */
+var PET_LEVELS = [
+  { min:0,  name:'낯가림',   mood:'아직 배가 고픈가 봐요' },
+  { min:3,  name:'꼬리 흔들', mood:'윤서가 반가운가 봐요' },
+  { min:8,  name:'단짝',     mood:'꼬리를 살랑살랑 흔들어요' },
+  { min:15, name:'찰떡',     mood:'윤서만 보면 신나요' },
+  { min:25, name:'영원한 친구', mood:'꼬리 흔들기가 멈추지 않아요' }
+];
+var PET_LINES = [
+  '와앙! 뼈다귀 최고야 멍멍!',
+  '윤서 덕분에 배불러요!',
+  '냠냠, 아삭아삭 맛있다!',
+  '멍멍! 꼬리가 저절로 흔들려요',
+  '칠뜩이는 지금 세상에서 제일 행복해요'
+];
+var PET_LINES_FULL = ['배불러요~ 이제 같이 놀아요!', '으앙, 배가 빵빵해요!'];
+function petLevel(fed){
+  var lv = 1;
+  for(var i = 0; i < PET_LEVELS.length; i++){ if(fed >= PET_LEVELS[i].min) lv = i + 1; }
+  return lv;
+}
+function petSay(msg){
+  var el = document.getElementById('petBubble');
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+}
+function petMoodText(p, lv){
+  if(p.full >= 95) return '배가 빵빵해요! 아주 행복해요 💗';
+  if(p.full <= 18) return '배에서 꼬르륵 소리가 나요 🍖';
+  return PET_LEVELS[lv - 1].mood;
+}
+function renderPet(){
+  var p = petToday();
+  p.full = Math.max(0, Math.min(100, p.full));
+  p.happy = Math.max(0, Math.min(100, p.happy));
+  var lv = petLevel(p.fed);
+  var nextMin = PET_LEVELS[lv] ? PET_LEVELS[lv].min : PET_LEVELS[lv - 1].min + 1;
+  var curMin = PET_LEVELS[lv - 1].min;
+  var pct = lv >= PET_LEVELS.length ? 100 : Math.min(100, Math.round((p.fed - curMin) / Math.max(1, nextMin - curMin) * 100));
+  var el;
+  el = document.getElementById('petLv'); if(el) el.textContent = 'Lv.' + lv;
+  el = document.getElementById('petFullBar'); if(el) el.style.width = p.full + '%';
+  el = document.getElementById('petHappyBar'); if(el) el.style.width = p.happy + '%';
+  el = document.getElementById('petBondBar'); if(el) el.style.width = pct + '%';
+  el = document.getElementById('petFullN'); if(el) el.textContent = p.full + '%';
+  el = document.getElementById('petHappyN'); if(el) el.textContent = p.happy + '%';
+  el = document.getElementById('petBondN'); if(el) el.textContent = 'Lv.' + lv;
+  el = document.getElementById('petMood'); if(el) el.textContent = petMoodText(p, lv);
+  el = document.getElementById('btnFeed'); if(el) el.disabled = (data.bones || 0) <= 0;
+  paintBones();
+}
+var petEating = false, petTimer = null;
+function feedPet(){
+  var p = petToday();
+  if(petEating) return;
+  if((data.bones || 0) <= 0){
+    petSay('뼈다귀가 하나도 없어요! 글자를 쓰고 모아 올까요?');
+    sfx('warn');
+    return;
+  }
+  data.bones--;
+  p.fed++;
+  p.dayFed++;
+  p.full = Math.min(100, p.full + 22);
+  p.happy = Math.min(100, p.happy + 16);
+  save();
+  paintBones();
+  var img = document.getElementById('petImg');
+  var fly = document.getElementById('boneFly');
+  petEating = true;
+  img.src = 'img/childeuk-happy.jpg';
+  img.classList.add('eating');
+  if(fly){ fly.classList.remove('go'); void fly.offsetWidth; fly.classList.add('go'); }
+  sfx('munch');
+  var lv = petLevel(p.fed);
+  petSay(p.full >= 100
+    ? PET_LINES_FULL[Math.floor(Math.random() * PET_LINES_FULL.length)]
+    : PET_LINES[Math.floor(Math.random() * PET_LINES.length)]);
+  if(lv > 1 && p.fed === PET_LEVELS[lv - 1].min){
+    setTimeout(function(){ petSay('친밀도 Lv.' + lv + ' ' + PET_LEVELS[lv - 1].name + '! 고마워요 윤서!'); }, 1600);
+  }
+  clearTimeout(petTimer);
+  petTimer = setTimeout(function(){
+    petEating = false;
+    img.classList.remove('eating');
+    img.src = 'img/childeuk.jpg';
+    renderPet();
+  }, 1750);
+  renderPet();
+}
+
+/* =====================================================================
+   13.6  📝 받아쓰기
+   ===================================================================== */
+var DICT_LEVELS = [
+  { id:'easy', label:'쉬운 글자', sub:'받침 없는 낱말', emoji:'🍎' },
+  { id:'practice', label:'조금 더 연습', sub:'쌍자음·복합모음', emoji:'🔤' },
+  { id:'word', label:'받침 글자', sub:'받침 있는 낱말', emoji:'🌳' },
+  { id:'all', label:'전체 섞기', sub:'골고루 도전!', emoji:'🎲' }
+];
+var dictLevel = 'easy';
+function dictPool(level){
+  if(level === 'all') return POOLS.easy.concat(POOLS.practice, POOLS.word);
+  return (POOLS[level] || []).slice();
+}
+function shuffle(a){
+  for(var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function dictLevelLabel(id){
+  var l = DICT_LEVELS.filter(function(x){ return x.id === id; })[0];
+  return l ? l.label : '';
+}
+function renderDictHome(){
+  var host = document.getElementById('dictLevels');
+  if(!host) return;
+  host.innerHTML = '';
+  DICT_LEVELS.forEach(function(lv){
+    var b = document.createElement('button');
+    b.className = 'lvcard' + (dictLevel === lv.id ? ' on' : '');
+    b.id = 'lv-' + lv.id;
+    b.innerHTML = '<div class="lt">' + lv.emoji + ' ' + lv.label + '</div>' +
+                  '<div class="ls">' + lv.sub + '</div>' +
+                  '<div class="ln">' + dictPool(lv.id).length + '개</div>';
+    b.addEventListener('click', function(){ sfx('tap'); dictLevel = lv.id; renderDictHome(); });
+    host.appendChild(b);
+  });
+  var best = document.getElementById('dictBest');
+  if(best) best.innerHTML = data.dictRuns
+    ? '지금까지 받아쓰기 <b>' + data.dictRuns + '번</b> 완주했어요!'
+    : '아직 받아쓰기에 도전한 적이 없어요. 첫 성적표를 받아 볼까요?';
+}
+function setDictChrome(on){
+  document.getElementById('wtNorm').hidden = on;
+  document.getElementById('wtDict').hidden = !on;
+  document.getElementById('toolsNorm').hidden = on;
+  document.getElementById('toolsDict').hidden = !on;
+  document.getElementById('navNorm').hidden = on;
+  dictDots.hidden = !on;
+  if(on) wSay.textContent = '';
+}
+function startDictation(){
+  var pool = shuffle(dictPool(dictLevel).slice());
+  var seen = {}, list = [];
+  pool.forEach(function(it){ if(!seen[it.ch]){ seen[it.ch] = 1; list.push(it); } });
+  if(list.length < 10){ toast('낱말이 모자라요'); return; }
+  dict.on = true;
+  dict.list = list.slice(0, 10);
+  dict.i = 0;
+  dict.results = [];
+  dict.hints = 0;
+  dict.hintUntil = 0;
+  dict.bonus = 3;
+  dict.levelLabel = dictLevelLabel(dictLevel);
+  setDictChrome(true);
+  openDictQuestion();
+}
+function openDictQuestion(){
+  var it = dict.list[dict.i];
+  if(!it){ showReport(); return; }
+  curIndex = -1;
+  model = buildWord(it.ch);
+  model.idx = 0;
+  attempt = null; animating = false; demoIndex = -1; demoProgress = 0;
+  dict.hintUntil = 0;
+  document.getElementById('dictNum').textContent = (dict.i + 1) + ' / 10';
+  document.getElementById('dictLvLabel').textContent = '받아쓰기 · ' + dict.levelLabel;
+  updateProgress();
+  renderDictDots();
+  showView('write');
+  requestAnimationFrame(function(){ fitCanvas(); });
+  clearTimeout(sayTimer);
+  sayTimer = setTimeout(function(){ speakDict(it); }, 620);
+}
+function speakDict(it){
+  if(!it) return;
+  speak(it.ch);   /* 받아쓰기는 낱말만 또박또박 */
+}
+function dictHintOn(){ return dict.on && Date.now() < dict.hintUntil; }
+function showDictHint(){
+  if(!dict.on) return;
+  dict.hints++;
+  dict.hintUntil = Date.now() + 4200;
+  sfx('tap');
+  render();
+  clearTimeout(dict.hintTimer);
+  dict.hintTimer = setTimeout(function(){ render(); }, 4300);
+}
+function renderDictDots(){
+  if(!dictDots) return;
+  var html = '';
+  for(var i = 0; i < 10; i++){
+    var cls = '';
+    if(i < dict.results.length) cls = 'done';
+    else if(i === dict.results.length) cls = 'on';
+    html += '<i class="' + cls + '"></i>';
+  }
+  html += '<span class="dn">' + dict.results.length + ' / 10</span>';
+  dictDots.innerHTML = html;
+}
+function nextDictQuestion(){
+  clearTimeout(dictTimer);
+  dict.i++;
+  if(dict.i >= dict.list.length){ showReport(); return; }
+  openDictQuestion();
+}
+function confettiIn(host, n){
+  if(!host) return;
+  var marks = ['⭐','✨','💖','🌟','🎀','⭐'];
+  for(var i = 0; i < (n || 10); i++){
+    var s = document.createElement('span');
+    s.className = 'cf';
+    s.textContent = marks[i % marks.length];
+    s.style.left = (6 + Math.random() * 88) + '%';
+    s.style.animationDelay = (Math.random() * 0.7) + 's';
+    s.style.fontSize = (16 + Math.random() * 16) + 'px';
+    host.appendChild(s);
+    (function(el){ setTimeout(function(){ el.remove(); }, 2900); })(s);
+  }
+}
+function showReport(){
+  clearTimeout(cheerTimer);
+  clearTimeout(dictTimer);
+  dict.on = false;
+  setDictChrome(false);
+  data.dictRuns = (data.dictRuns || 0) + 1;
+  addBones(dict.bonus || 3);
+  save();
+  var done = dict.results.length;
+  document.getElementById('rpScore').textContent = done * 10;
+  var list = document.getElementById('rpList');
+  list.innerHTML = '';
+  dict.results.forEach(function(r){
+    var li = document.createElement('li');
+    li.innerHTML = '<b>' + r.ch + '</b><span class="ok">⭐</span>';
+    list.appendChild(li);
+  });
+  document.getElementById('rpBonus').textContent =
+    '🦴 뼈다귀 +' + (dict.bonus || 3) + '  (모두 ' + (data.bones || 0) + '개)' +
+    (dict.hints ? ' · 힌트 ' + dict.hints + '번' : '');
+  var rp = document.getElementById('report');
+  rp.hidden = false;
+  sfx('win');
+  confettiIn(rp.querySelector('.paper'), 12);
+  renderDictHome();
+  updateSummary();
+}
+
+/* =====================================================================
    14. 이벤트 연결
    ===================================================================== */
 pad.addEventListener('pointerdown', onDown);
@@ -1521,15 +2288,44 @@ pad.addEventListener('pointerup', onUp);
 pad.addEventListener('pointercancel', function(){ attempt = null; penStop(); render(); });
 pad.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 
-document.getElementById('btnBack').addEventListener('click', function(){ sfx('tap'); gotoTab(curTab); });
+document.getElementById('btnBack').addEventListener('click', function(){
+  sfx('tap');
+  if(dict.on){ dict.on = false; setDictChrome(false); gotoTab('dict'); return; }
+  gotoTab(curTab);
+});
 document.getElementById('btnShow').addEventListener('click', function(){ sfx('tap'); playDemo(); });
-document.getElementById('btnSay2').addEventListener('click', function(){ speak(letterSpeech()); });
+document.getElementById('btnSay2').addEventListener('click', function(){
+  var it = currentItem();
+  if(dict.on){ speakDict(it); return; }
+  speak((it && it.say) || letterSpeech());
+});
 document.getElementById('btnReset').addEventListener('click', function(){
   sfx('tap');
   if(!model) return;
   model.idx = 0; attempt = null; animating = false; demoIndex = -1;
   updateProgress(); render();
   toast('처음부터 다시 써 볼까요?');
+});
+document.getElementById('btnReset2').addEventListener('click', function(){
+  sfx('tap');
+  if(!model) return;
+  model.idx = 0; attempt = null; animating = false; demoIndex = -1;
+  dict.hintUntil = 0;
+  updateProgress(); render();
+  toast('다시 써 볼까요?');
+});
+document.getElementById('btnHint').addEventListener('click', showDictHint);
+document.getElementById('btnDictStart').addEventListener('click', function(){ sfx('tap'); startDictation(); });
+document.getElementById('btnFeed').addEventListener('click', feedPet);
+document.getElementById('rpClose').addEventListener('click', function(){
+  sfx('tap');
+  document.getElementById('report').hidden = true;
+  gotoTab('dict');
+});
+document.getElementById('rpAgain').addEventListener('click', function(){
+  sfx('tap');
+  document.getElementById('report').hidden = true;
+  startDictation();
 });
 document.getElementById('btnGuide').addEventListener('click', function(){
   guideOn = !guideOn;
@@ -1574,9 +2370,12 @@ window.addEventListener('resize', function(){ if(!viewWrite.hidden) fitCanvas();
    15. 시작
    ===================================================================== */
 starTotalEl.textContent = data.total;
+petToday();
+paintBones();
 updateSummary();
 renderTabs();
 gotoTab('basic');
+try { if(window.speechSynthesis) window.speechSynthesis.getVoices(); } catch(e){}
 
 /* ---------------- 테스트 훅 (?test=1 로 열었을 때만) ---------------- */
 if(new URLSearchParams(location.search).has('test')){
@@ -1651,21 +2450,56 @@ if(new URLSearchParams(location.search).has('test')){
       if(btnMusic) btnMusic.click();
       return bgm.on;
     },
+    pet: function(){
+      petToday();
+      return { bones:data.bones||0, fed:data.pet.fed, full:data.pet.full, happy:data.pet.happy, dayFed:data.pet.dayFed, level:petLevel(data.pet.fed) };
+    },
+    feed: function(){
+      var b = document.getElementById('btnFeed');
+      if(!b || b.disabled) return 'no-bones';
+      b.click();
+      return true;
+    },
+    dictStart: function(level){ dictLevel = level || 'easy'; startDictation(); return window.__t.dictInfo(); },
+    dictInfo: function(){
+      var rp = document.getElementById('rpScore');
+      return {
+        on:dict.on, i:dict.i, results:dict.results.map(function(r){ return r.ch; }), hints:dict.hints,
+        word:(dict.on && dict.list[dict.i]) ? dict.list[dict.i].ch : null,
+        model:model ? model.word : null, strokes:model ? model.strokes.length : 0, strokeIdx:model ? model.idx : -1,
+        report:!document.getElementById('report').hidden, score:rp ? rp.textContent : null,
+        dots:dictDots ? dictDots.querySelectorAll('i').length : 0
+      };
+    },
+    finishWord: function(){
+      if(!model) return 'no-model';
+      var guard = 0;
+      while(model.idx < model.strokes.length && guard++ < 40){ window.__t.trace(model.idx); }
+      return { word:model.word, idx:model.idx, total:model.strokes.length };
+    },
+    hint: function(){ showDictHint(); return dict.hints; },
+    say: function(){ var it = currentItem(); return it ? (it.say || it.ch) : null; },
+    setTheme: function(k){ themeSel = k; renderThemeBar(); renderCards(); return themeSel; },
+    themes: function(){
+      var seen = {};
+      curList.forEach(function(it){ seen[it.theme] = (seen[it.theme] || 0) + 1; });
+      return { tab:curTab, total:curList.length, seen:seen, bar:!themeBar.hidden };
+    },
+    go: function(id){ gotoTab(id); return curTab; },
     audit: function(){
       var out = [];
-      TABS.forEach(function(tb){
-        if(tb.id === 'star') return;
-        tb.items().forEach(function(it){
+      ['basic','easy','practice','word'].forEach(function(id){
+        tabItems(id).forEach(function(it){
           var w = buildWord(it.ch);
           var bad = [], tiny = [];
           w.strokes.forEach(function(st){
             for(var k=0;k<st.pts.length;k++){
               var p = st.pts[k];
-              if(p[0] < -1 || p[0] > 1001 || p[1] < -1 || p[1] > 1001) bad.push(st.idx);
+              if(!isFinite(p[0]) || !isFinite(p[1]) || p[0] < -1 || p[0] > 1001 || p[1] < -1 || p[1] > 1001) bad.push(st.idx);
             }
             if(st.len < 8) tiny.push(st.idx);
           });
-          out.push({ch:it.ch, strokes:w.strokes.length, out:bad, tiny:tiny, empty:w.strokes.length === 0});
+          out.push({ tab:id, ch:it.ch, say:it.say||'', strokes:w.strokes.length, out:bad, tiny:tiny, empty:w.strokes.length === 0 });
         });
       });
       return out;
