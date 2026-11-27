@@ -1631,7 +1631,8 @@ if(new URLSearchParams(location.search).has('test')){
   tb.textContent = 'TEST';
   tb.style.cssText = 'position:fixed;left:0;bottom:0;z-index:99;font-size:9px;opacity:.25;padding:4px 6px;border:0;border-radius:8px;background:#fff;';
   tb.addEventListener('click', function(){
-    window.__t.trace(0);
+    var s = window.__t.info();
+    window.__t.trace(s ? s.idx : 0);
     window.__t.holdCheer();
   });
   document.body.appendChild(tb);
