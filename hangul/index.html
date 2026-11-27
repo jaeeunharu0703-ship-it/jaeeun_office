@@ -41,6 +41,11 @@ h1{font-size:17.5px; margin:0; letter-spacing:-.5px; font-weight:800;}
 .sub{margin:0; font-size:11.5px; color:var(--ink2);}
 .stars{margin-left:auto; display:flex; align-items:center; gap:5px; background:#fff; border:1.5px solid var(--line); border-radius:999px; padding:6px 12px; font-weight:800; font-size:14px; box-shadow:var(--shadow-s);}
 .stars b{color:var(--pink-d);}
+.mbtn{display:flex; align-items:center; justify-content:center; gap:4px; flex:0 0 auto; border:1.5px solid #FFC9DA; background:linear-gradient(150deg,#FFF1F6,#FFF9EE); color:var(--pink-d); border-radius:999px; padding:6px 10px; font-size:11.5px; font-weight:800; line-height:1; box-shadow:var(--shadow-s); transition:transform .08s, background .2s, border-color .2s;}
+.mbtn:active{transform:scale(.95);}
+.mbtn .mi{font-size:14px; display:block; line-height:1;}
+.mbtn.off{background:#fff; border-color:var(--line); color:#B6A395; box-shadow:none;}
+.mbtn.off .mi{opacity:.55; filter:grayscale(1);}
 .tabs{display:flex; gap:6px; padding:8px 12px 2px; overflow-x:auto; flex:0 0 auto; scrollbar-width:none;}.tabs::-webkit-scrollbar{display:none;}
 .tab{flex:0 0 auto; border:1.5px solid var(--line); background:#fff; color:var(--ink2); border-radius:999px; padding:7px 13px; font-size:13px; font-weight:800; transition:.15s;}
 .tab.on{background:var(--pink); border-color:var(--pink); color:#fff; box-shadow:0 4px 12px rgba(255,127,163,.32);}
@@ -123,6 +128,7 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
 .cf{position:absolute; font-size:22px; animation:fall 1.9s linear forwards; pointer-events:none;}
 @keyframes fall{0%{transform:translateY(-10vh) rotate(0); opacity:1;} 100%{transform:translateY(95vh) rotate(320deg); opacity:0;}}
 @media (max-height:560px){ .tools button{font-size:11.5px; padding:8px 2px;} .card .g{font-size:28px;} }
+@media (max-width:430px){ .mbtn .mt{display:none;} .mbtn{padding:7px 8px; border-radius:14px;} header.top{gap:8px;} }
 @media (max-width:420px){ .tools{gap:5px; padding:6px 8px 2px;} .tools button{font-size:11px; padding:9px 2px;} .navrow{padding:6px 8px calc(8px + env(safe-area-inset-bottom));} .wt-title .big{font-size:19px;} }
 </style>
 </head>
@@ -134,6 +140,9 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
       <h1>윤서의 한글 공부방</h1>
       <p class="sub">한 획씩, 바르게 써 볼까요?</p>
     </div>
+    <button class="mbtn" id="btnMusic" aria-pressed="true" aria-label="배경음악 켜기·끄기" title="배경음악">
+      <span class="mi">🎵</span><span class="mt">배경음</span>
+    </button>
     <div class="stars" title="모은 별">⭐ <b id="starTotal">0</b></div>
   </header>
 
@@ -958,6 +967,7 @@ function onDown(e){
   }
   attempt = { idx: model.idx, pid: e.pointerId, type: e.pointerType, points:[p], bestT:0, dirChecked:false, offTrack:false };
   sfx('start');
+  penStart(e);
   render();
 }
 function onMove(e){
@@ -970,6 +980,7 @@ function onMove(e){
   var last = attempt.points[attempt.points.length-1];
   if(Math.hypot(p[0]-last[0], p[1]-last[1]) < 3) return;
   attempt.points.push(p);
+  penMove(e);
 
   /* 처음 움직일 때 방향이 반대면 바로 안내 */
   if(!attempt.dirChecked && attempt.points.length >= 3){
@@ -984,6 +995,7 @@ function onMove(e){
       attempt.dirChecked = true;
       if(cos < -0.25){
         attempt = null;
+        penStop();
         toast('화살표 방향으로 그어 볼까요?');
         sfx('warn');
         render();
@@ -1018,6 +1030,7 @@ function onMove(e){
 }
 function onUp(e){
   if(!attempt || e.pointerId !== attempt.pid) return;
+  penStop();
   var st = model.strokes[attempt.idx];
   var s = st.sylScale;
   var end = st.pts[st.pts.length-1];
@@ -1041,6 +1054,7 @@ function onUp(e){
 function finishStroke(){
   var st = model.strokes[attempt.idx];
   attempt = null;
+  penStop();
   model.idx++;
   sfx('stroke');
   updateProgress();
@@ -1137,6 +1151,262 @@ function sfx(kind){
   else if(kind === 'win'){ [523,659,784,1046].forEach(function(f,i){ tone(f, 0.28, i*0.09, 0.12, 'sine'); }); }
   else if(kind === 'tap'){ tone(520, 0.06, 0, 0.05, 'sine'); }
 }
+
+/* ---------------------------------------------------------------
+   연필 사각사각 소리  (루프 노이즈 + 밴드패스, 움직일 때만)
+   --------------------------------------------------------------- */
+var pen = { ready:false, src:null, gain:null, filt:null, lastX:0, lastY:0, lastPT:0, lastMove:0, target:0, raf:0 };
+function penEnsure(){
+  var a = audio();
+  if(!a) return false;
+  if(pen.ready) return true;
+  var sr = a.sampleRate;
+  var len = Math.floor(sr * 1.6);
+  var buf = a.createBuffer(1, len, sr);
+  var d = buf.getChannelData(0);
+  var grain = Math.max(8, Math.round(sr / 42));   /* 초당 42개의 결 */
+  var env = 0.6, exc = 0.6;
+  for(var i = 0; i < len; i++){
+    if(i % grain === 0){ exc = 0.22 + Math.random() * 0.78; }
+    env += (exc - env) * 0.028;
+    d[i] = (Math.random() * 2 - 1) * env;
+  }
+  var src = a.createBufferSource();
+  src.buffer = buf; src.loop = true;
+  var hp = a.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 800; hp.Q.value = 0.4;
+  var bp1 = a.createBiquadFilter(); bp1.type = 'bandpass'; bp1.frequency.value = 2500; bp1.Q.value = 0.75;
+  var bp2 = a.createBiquadFilter(); bp2.type = 'bandpass'; bp2.frequency.value = 1150; bp2.Q.value = 1.3;
+  var g2 = a.createGain(); g2.gain.value = 0.45;
+  var g = a.createGain(); g.gain.value = 0.0001;
+  src.connect(hp);
+  hp.connect(bp1); bp1.connect(g);
+  hp.connect(bp2); bp2.connect(g2); g2.connect(g);
+  g.connect(a.destination);
+  try { src.start(0); } catch(e) {}
+  pen.src = src; pen.gain = g; pen.filt = bp1; pen.ready = true;
+  return true;
+}
+function penStart(e){
+  if(!penEnsure()) return;
+  var a = ac;
+  var now = performance.now();
+  pen.lastX = e.clientX; pen.lastY = e.clientY;
+  pen.lastPT = now; pen.lastMove = now; pen.target = 0.02;
+  try {
+    pen.gain.gain.cancelScheduledValues(a.currentTime);
+    pen.gain.gain.setTargetAtTime(0.02, a.currentTime, 0.02);
+  } catch(err){}
+  if(!pen.raf) pen.raf = requestAnimationFrame(penLoop);
+}
+function penMove(e){
+  if(!pen.ready) return;
+  var a = ac;
+  var now = performance.now();
+  var dt = Math.max(1, Math.min(64, now - pen.lastPT));
+  var dist = Math.hypot(e.clientX - pen.lastX, e.clientY - pen.lastY);
+  var spd = dist / dt;                       /* px / ms */
+  pen.lastX = e.clientX; pen.lastY = e.clientY; pen.lastPT = now; pen.lastMove = now;
+  pen.target = Math.min(0.16, 0.018 + Math.min(1.6, spd) * 0.078);
+  try {
+    pen.gain.gain.setTargetAtTime(pen.target, a.currentTime, 0.045);
+    pen.filt.frequency.setTargetAtTime(1900 + Math.min(1400, spd * 700), a.currentTime, 0.07);
+  } catch(err){}
+}
+function penStop(){
+  if(!pen.ready) return;
+  var a = ac;
+  pen.target = 0.0001;
+  try {
+    pen.gain.gain.cancelScheduledValues(a.currentTime);
+    pen.gain.gain.setTargetAtTime(0.0001, a.currentTime, 0.03);
+  } catch(err){}
+}
+function penLoop(){
+  pen.raf = 0;
+  if(!pen.ready) return;
+  var idle = performance.now() - pen.lastMove;
+  if(idle > 110 && pen.target > 0.001){
+    pen.target = 0.0001;
+    try { pen.gain.gain.setTargetAtTime(0.0001, ac.currentTime, 0.05); } catch(e){}
+  }
+  if(idle < 420) pen.raf = requestAnimationFrame(penLoop);
+}
+
+/* ---------------------------------------------------------------
+   배경음악 : 오르골·칼림바풍 자장가 루프 (Web Audio 합성)
+   --------------------------------------------------------------- */
+var BGM_KEY = 'yoonseo-hangul-bgm';
+var SONG = {
+  bpm: 68, bars: 16,
+  /* [시작박, midi, 길이(박), 세기] */
+  mel: [
+    [0,76,1,1],[1,79,1,1],[2,81,2,1],
+    [4,79,2,.95],[6,76,2,.9],
+    [8,74,1,.9],[9,76,1,1],[10,79,2,1],
+    [12,76,1,.85],[13,74,1,.85],[14,72,2,1],
+    [16,72,1,.9],[17,74,1,.95],[18,76,2,1],
+    [20,79,1,.95],[21,81,1,1],[22,79,2,1],
+    [24,76,1,.9],[25,74,1,.9],[26,79,2,1],
+    [28,72,4,.9],
+    [32,81,1,1],[33,79,1,.95],[34,76,2,1],
+    [36,74,2,.95],[38,76,2,1],
+    [40,79,1,1],[41,76,1,.9],[42,74,2,.9],
+    [44,72,2,1],[46,74,2,.9],
+    [48,76,1,.95],[49,79,1,1],[50,81,2,1],
+    [52,84,1,1],[53,81,1,.9],[54,79,2,1],
+    [56,76,2,.95],[58,74,1,.9],[59,72,1,.9],
+    [60,72,4,.85]
+  ],
+  bass: [
+    [0,48,4],[4,45,4],[8,41,4],[12,48,4],
+    [16,48,4],[20,45,4],[24,43,4],[28,48,4],
+    [32,41,4],[36,43,4],[40,45,4],[44,41,4],
+    [48,48,4],[52,45,4],[56,43,4],[60,48,4]
+  ],
+  fifth: [
+    [2,55],[6,52],[10,48],[14,55],
+    [18,55],[22,52],[26,50],[30,55],
+    [34,48],[38,50],[42,52],[46,48],
+    [50,55],[54,52],[58,50],[62,55]
+  ],
+  spark: [
+    [30,84,.55],[30.5,88,.5],[31,91,.48],
+    [62,88,.5],[62.5,91,.45],[63,96,.4]
+  ]
+};
+var bgm = { on:true, gain:null, timer:null, next:0, beat:0, playing:false, spb:60/68 };
+try { bgm.on = (localStorage.getItem(BGM_KEY) !== 'off'); } catch(e){}
+function bgmSave(){ try { localStorage.setItem(BGM_KEY, bgm.on ? 'on' : 'off'); } catch(e){} }
+function bgmInit(){
+  var a = audio();
+  if(!a) return false;
+  if(!bgm.gain){
+    var g = a.createGain();
+    g.gain.value = 0.0001;
+    g.connect(a.destination);
+    bgm.gain = g;
+  }
+  return true;
+}
+function bgmNote(t, midi, dur, vol, bright){
+  var a = ac;
+  if(!a || !bgm.gain) return;
+  var f = 440 * Math.pow(2, (midi - 69) / 12);
+  var g = a.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  g.connect(bgm.gain);
+  var o1 = a.createOscillator();
+  o1.type = 'triangle'; o1.frequency.setValueAtTime(f, t);
+  var o2 = a.createOscillator();
+  o2.type = 'sine'; o2.frequency.setValueAtTime(f * 2, t);
+  var g2 = a.createGain(); g2.gain.value = (bright == null ? 0.2 : bright);
+  o1.connect(g);
+  o2.connect(g2); g2.connect(g);
+  o1.start(t); o1.stop(t + dur + 0.05);
+  o2.start(t); o2.stop(t + dur + 0.05);
+}
+function bgmScheduleBeat(beat, t){
+  var spb = bgm.spb, i, n;
+  for(i = 0; i < SONG.mel.length; i++){
+    n = SONG.mel[i];
+    if(n[0] === beat) bgmNote(t, n[1], Math.max(0.95, n[2] * spb * 1.3), 0.085 * (n[3] || 1), 0.22);
+  }
+  for(i = 0; i < SONG.bass.length; i++){
+    n = SONG.bass[i];
+    if(n[0] === beat) bgmNote(t, n[1], 3.2, 0.062, 0.05);
+  }
+  for(i = 0; i < SONG.fifth.length; i++){
+    n = SONG.fifth[i];
+    if(n[0] === beat) bgmNote(t, n[1], 1.8, 0.032, 0.04);
+  }
+  for(i = 0; i < SONG.spark.length; i++){
+    n = SONG.spark[i];
+    if(n[0] === beat) bgmNote(t, n[1], 1.6, 0.05 * (n[2] || 1), 0.3);
+  }
+}
+var BGM_GRID = 0.5;
+function bgmTick(){
+  var a = ac;
+  if(!a || !bgm.playing || !bgm.gain) return;
+  if(a.state === 'suspended'){ try { a.resume(); } catch(e){} }
+  if(bgm.next < a.currentTime - 0.6) bgm.next = a.currentTime + 0.06;   /* 잠든 사이 밀린 음은 건너뜀 */
+  var guard = 0;
+  while(bgm.next < a.currentTime + 0.85 && guard++ < 24){
+    bgmScheduleBeat(bgm.beat, bgm.next);
+    bgm.beat += BGM_GRID;
+    if(bgm.beat >= SONG.bars * 4) bgm.beat -= SONG.bars * 4;
+    bgm.next += bgm.spb * BGM_GRID;
+  }
+}
+function bgmPlay(){
+  if(!bgmInit()) return;
+  var a = ac;
+  bgm.on = true;
+  if(!bgm.timer){
+    bgm.beat = 0;
+    bgm.next = a.currentTime + 0.2;
+    bgm.playing = true;
+    try {
+      bgm.gain.gain.cancelScheduledValues(a.currentTime);
+      bgm.gain.gain.setValueAtTime(Math.max(0.0001, bgm.gain.gain.value), a.currentTime);
+      bgm.gain.gain.setTargetAtTime(0.55, a.currentTime, 0.7);
+    } catch(e){}
+    bgm.timer = setInterval(bgmTick, 120);
+    bgmTick();
+  } else {
+    bgm.playing = true;
+  }
+}
+function bgmPause(){
+  bgm.playing = false;
+  clearInterval(bgm.timer); bgm.timer = null;
+  if(bgm.gain && ac){
+    try {
+      bgm.gain.gain.cancelScheduledValues(ac.currentTime);
+      bgm.gain.gain.setValueAtTime(Math.max(0.0001, bgm.gain.gain.value), ac.currentTime);
+      bgm.gain.gain.setTargetAtTime(0.0001, ac.currentTime, 0.22);
+    } catch(e){}
+  }
+}
+var btnMusic = document.getElementById('btnMusic');
+function bgmPaint(){
+  if(!btnMusic) return;
+  btnMusic.classList.toggle('off', !bgm.on);
+  btnMusic.setAttribute('aria-pressed', bgm.on ? 'true' : 'false');
+  btnMusic.setAttribute('aria-label', bgm.on ? '배경음악 끄기' : '배경음악 켜기');
+  var mi = btnMusic.querySelector('.mi'), mt = btnMusic.querySelector('.mt');
+  if(mi) mi.textContent = bgm.on ? '🎵' : '🔇';
+  if(mt) mt.textContent = bgm.on ? '배경음' : '음악 꺼짐';
+}
+if(btnMusic){
+  btnMusic.addEventListener('click', function(e){
+    e.stopPropagation();
+    bgm.on = !bgm.on;
+    bgmSave(); bgmPaint();
+    if(bgm.on){ audio(); bgmPlay(); } else { bgmPause(); }
+    sfx('tap');
+  });
+}
+/* iOS : 첫 사용자 제스처에서 오디오를 깨우고 음악을 시작 */
+var audioUnlocked = false;
+function unlockAudio(){
+  if(audioUnlocked) return;
+  audioUnlocked = true;
+  audio();
+  if(bgm.on) bgmPlay();
+}
+document.addEventListener('pointerdown', unlockAudio, { capture:true, passive:true });
+document.addEventListener('keydown', unlockAudio);
+document.addEventListener('touchend', unlockAudio, { capture:true, passive:true });
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden) return;
+  if(bgm.on){ audio(); bgmPlay(); }
+});
+window.addEventListener('blur', penStop);
+bgmPaint();
+
 function speak(text){
   try {
     if(!('speechSynthesis' in window) || !text) return;
@@ -1201,7 +1471,7 @@ function playDemo(){
 pad.addEventListener('pointerdown', onDown);
 pad.addEventListener('pointermove', onMove);
 pad.addEventListener('pointerup', onUp);
-pad.addEventListener('pointercancel', function(){ attempt = null; render(); });
+pad.addEventListener('pointercancel', function(){ attempt = null; penStop(); render(); });
 pad.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 
 document.getElementById('btnBack').addEventListener('click', function(){ sfx('tap'); gotoTab(curTab); });
@@ -1314,6 +1584,25 @@ if(new URLSearchParams(location.search).has('test')){
       return { idx: model ? model.idx : -1, total: model ? model.strokes.length : 0, cheer: !document.getElementById('cheer').hidden, stars: data.total };
     },
     holdCheer: function(){ clearTimeout(cheerTimer); return true; },
+    audio: function(){
+      return {
+        ctx: ac ? ac.state : 'none',
+        unlocked: audioUnlocked,
+        musicOn: bgm.on,
+        musicRunning: !!bgm.timer,
+        musicGain: bgm.gain ? +bgm.gain.gain.value.toFixed(4) : -1,
+        musicBeat: bgm.beat,
+        penReady: pen.ready,
+        penGain: pen.ready ? +pen.gain.gain.value.toFixed(4) : -1,
+        penTarget: +pen.target.toFixed(4),
+        stored: (function(){ try { return localStorage.getItem(BGM_KEY); } catch(e){ return null; } })()
+      };
+    },
+    music: function(on){
+      if(on === undefined) return bgm.on;
+      if(btnMusic) btnMusic.click();
+      return bgm.on;
+    },
     audit: function(){
       var out = [];
       TABS.forEach(function(tb){
