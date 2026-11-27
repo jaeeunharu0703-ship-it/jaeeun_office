@@ -39,7 +39,7 @@ header.top{display:flex; align-items:center; gap:10px; padding:calc(8px + env(sa
 .hd{min-width:0;}
 h1{font-size:17.5px; margin:0; letter-spacing:-.5px; font-weight:800;}
 .sub{margin:0; font-size:11.5px; color:var(--ink2);}
-.stars{margin-left:auto; display:flex; align-items:center; gap:5px; background:#fff; border:1.5px solid var(--line); border-radius:999px; padding:6px 12px; font-weight:800; font-size:14px; box-shadow:var(--shadow-s);}
+.stars{margin-left:auto; display:flex; align-items:center; gap:4px; background:#fff; border:1.5px solid var(--line); border-radius:999px; padding:5px 10px; font-weight:800; font-size:13px; box-shadow:var(--shadow-s); white-space:nowrap;}
 .stars b{color:var(--pink-d);}
 .mbtn{display:flex; align-items:center; justify-content:center; gap:4px; flex:0 0 auto; border:1.5px solid #FFC9DA; background:linear-gradient(150deg,#FFF1F6,#FFF9EE); color:var(--pink-d); border-radius:999px; padding:6px 10px; font-size:11.5px; font-weight:800; line-height:1; box-shadow:var(--shadow-s); transition:transform .08s, background .2s, border-color .2s;}
 .mbtn:active{transform:scale(.95);}
@@ -130,7 +130,7 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
 /* ---------- 두 캐릭터 ---------- */
 .duo{position:relative; flex:0 0 auto; width:46px; height:46px;}
 .duo .avatar{width:46px; height:46px;}
-.duo .petmini{position:absolute; right:-9px; bottom:-7px; width:26px; height:26px; border-radius:50%; object-fit:cover; object-position:50% 28%; border:2px solid #fff; box-shadow:0 2px 6px rgba(180,120,80,.22); background:#FFF6EC;}
+.duo .petmini{position:absolute; right:-9px; bottom:-7px; width:26px; height:26px; border-radius:50%; object-fit:cover; object-position:50% 28%; border:2px solid #fff; box-shadow:0 2px 6px rgba(180,120,80,.22); background:#FFF6EC; cursor:pointer;}
 .stars .sep{display:inline-block; width:1px; height:13px; background:var(--line); margin:0 1px;}
 .stars .bn{color:#C98A3E;}
 .hd{flex:1 1 auto; min-width:0;}
@@ -222,7 +222,7 @@ h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .pethint{margin-top:9px; text-align:center; font-size:11.5px; font-weight:800; color:var(--ink2);}
 .pethint b{color:#C98A3E;}
 
-@media (max-width:430px){ h1{font-size:15.5px;} .stars{font-size:12.5px; padding:5px 9px; gap:4px;} .sub{font-size:10.5px;} }
+@media (max-width:430px){ h1{font-size:15px;} header.top{gap:6px; padding-left:12px; padding-right:12px;} .stars{font-size:12px; padding:4px 8px; gap:3px;} .sub{font-size:10.5px;} }
 @media (max-height:560px){ .tools button{font-size:11.5px; padding:8px 2px;} .card .g{font-size:28px;} }
 @media (max-width:430px){ .mbtn .mt{display:none;} .mbtn{padding:7px 8px; border-radius:14px;} header.top{gap:8px;} }
 @media (max-width:420px){ .tools{gap:5px; padding:6px 8px 2px;} .tools button{font-size:11px; padding:9px 2px;} .navrow{padding:6px 8px calc(8px + env(safe-area-inset-bottom));} .wt-title .big{font-size:19px;} }
@@ -2319,6 +2319,8 @@ document.getElementById('btnReset2').addEventListener('click', function(){
   toast('다시 써 볼까요?');
 });
 document.getElementById('btnHint').addEventListener('click', showDictHint);
+var petMini = document.querySelector('.petmini');
+if(petMini) petMini.addEventListener('click', function(e){ e.stopPropagation(); sfx('tap'); gotoTab('pet'); });
 document.getElementById('btnDictStart').addEventListener('click', function(){ sfx('tap'); startDictation(); });
 document.getElementById('btnFeed').addEventListener('click', feedPet);
 document.getElementById('rpClose').addEventListener('click', function(){
