@@ -747,7 +747,11 @@ function toast(msg){
 function onDown(e){
   if(!model || animating || !model.strokes.length) return;
   if(model.idx >= model.strokes.length) return;
-  if(attempt) return;
+  if(attempt){
+    /* 애플펜슬이 먼저 닿으면 손바닥 터치를 밀어내고 새로 시작 */
+    if(e.pointerType === 'pen' && attempt.type !== 'pen'){ attempt = null; }
+    else return;
+  }
   e.preventDefault();
   try { pad.setPointerCapture(e.pointerId); } catch(err){}
   var p = pointerLocal(e);
@@ -775,12 +779,12 @@ function onDown(e){
     sfx('warn');
     return;
   }
-  attempt = { idx: model.idx, points:[p], bestT:0, dirChecked:false, offTrack:false };
+  attempt = { idx: model.idx, pid: e.pointerId, type: e.pointerType, points:[p], bestT:0, dirChecked:false, offTrack:false };
   sfx('start');
   render();
 }
 function onMove(e){
-  if(!attempt) return;
+  if(!attempt || e.pointerId !== attempt.pid) return;
   e.preventDefault();
   var p = pointerLocal(e);
   var st = model.strokes[attempt.idx];
@@ -836,7 +840,7 @@ function onMove(e){
   requestRender();
 }
 function onUp(e){
-  if(!attempt) return;
+  if(!attempt || e.pointerId !== attempt.pid) return;
   var st = model.strokes[attempt.idx];
   var s = st.sylScale;
   var end = st.pts[st.pts.length-1];
