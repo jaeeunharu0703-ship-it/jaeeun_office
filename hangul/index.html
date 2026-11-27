@@ -131,8 +131,10 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
 .duo{position:relative; flex:0 0 auto; width:46px; height:46px;}
 .duo .avatar{width:46px; height:46px;}
 .duo .petmini{position:absolute; right:-9px; bottom:-7px; width:26px; height:26px; border-radius:50%; object-fit:cover; object-position:50% 28%; border:2px solid #fff; box-shadow:0 2px 6px rgba(180,120,80,.22); background:#FFF6EC;}
-.stars .sep{display:inline-block; width:1px; height:13px; background:var(--line); margin:0 2px;}
+.stars .sep{display:inline-block; width:1px; height:13px; background:var(--line); margin:0 1px;}
 .stars .bn{color:#C98A3E;}
+.hd{flex:1 1 auto; min-width:0;}
+h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 
 /* ---------- 테마 필터 ---------- */
 .themebar{display:flex; gap:6px; padding:8px 12px 0; overflow-x:auto; flex:0 0 auto; scrollbar-width:none;}
@@ -216,10 +218,11 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
 .bar b{flex:0 0 auto; width:42px; text-align:right; font-size:11px; font-weight:900; color:var(--pink-d);}
 .feedbtn{display:block; width:100%; margin-top:14px; border:none; border-radius:18px; padding:15px; font-size:16px; font-weight:900; color:#fff; background:linear-gradient(140deg,#FFC271,#F09A3E); box-shadow:0 8px 18px rgba(240,154,62,.3);}
 .feedbtn:active{transform:scale(.98);}
-.feedbtn:disabled{background:#E9DCCD; color:#fff; box-shadow:none;}
+.feedbtn:disabled{background:#EFE3D6; color:#A9968A; box-shadow:none;}
 .pethint{margin-top:9px; text-align:center; font-size:11.5px; font-weight:800; color:var(--ink2);}
 .pethint b{color:#C98A3E;}
 
+@media (max-width:430px){ h1{font-size:15.5px;} .stars{font-size:12.5px; padding:5px 9px; gap:4px;} .sub{font-size:10.5px;} }
 @media (max-height:560px){ .tools button{font-size:11.5px; padding:8px 2px;} .card .g{font-size:28px;} }
 @media (max-width:430px){ .mbtn .mt{display:none;} .mbtn{padding:7px 8px; border-radius:14px;} header.top{gap:8px;} }
 @media (max-width:420px){ .tools{gap:5px; padding:6px 8px 2px;} .tools button{font-size:11px; padding:9px 2px;} .navrow{padding:6px 8px calc(8px + env(safe-area-inset-bottom));} .wt-title .big{font-size:19px;} }
@@ -2027,7 +2030,7 @@ function playDemo(){
    13.5  🐶 칠뜩이 펫방
    ===================================================================== */
 var PET_LEVELS = [
-  { min:0,  name:'낯가림',   mood:'아직 배가 고픈가 봐요' },
+  { min:0,  name:'낯가림',   mood:'아직은 낯을 가리는 중이에요' },
   { min:3,  name:'꼬리 흔들', mood:'윤서가 반가운가 봐요' },
   { min:8,  name:'단짝',     mood:'꼬리를 살랑살랑 흔들어요' },
   { min:15, name:'찰떡',     mood:'윤서만 보면 신나요' },
@@ -2057,6 +2060,7 @@ function petSay(msg){
 function petMoodText(p, lv){
   if(p.full >= 95) return '배가 빵빵해요! 아주 행복해요 💗';
   if(p.full <= 18) return '배에서 꼬르륵 소리가 나요 🍖';
+  if(p.happy >= 85) return '기분이 아주 좋아요! 꼬리 살랑살랑 🐾';
   return PET_LEVELS[lv - 1].mood;
 }
 function renderPet(){
@@ -2213,11 +2217,11 @@ function dictHintOn(){ return dict.on && Date.now() < dict.hintUntil; }
 function showDictHint(){
   if(!dict.on) return;
   dict.hints++;
-  dict.hintUntil = Date.now() + 4200;
+  dict.hintUntil = Date.now() + 6200;
   sfx('tap');
   render();
   clearTimeout(dict.hintTimer);
-  dict.hintTimer = setTimeout(function(){ render(); }, 4300);
+  dict.hintTimer = setTimeout(function(){ render(); }, 6300);
 }
 function renderDictDots(){
   if(!dictDots) return;
@@ -2460,6 +2464,7 @@ if(new URLSearchParams(location.search).has('test')){
       b.click();
       return true;
     },
+    grant: function(n){ addBones(n || 1); return data.bones; },
     dictStart: function(level){ dictLevel = level || 'easy'; startDictation(); return window.__t.dictInfo(); },
     dictInfo: function(){
       var rp = document.getElementById('rpScore');
