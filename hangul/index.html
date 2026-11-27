@@ -282,9 +282,9 @@ var V_VOWELS = {'ㅏ':1,'ㅑ':1,'ㅓ':1,'ㅕ':1,'ㅣ':1,'ㅐ':1,'ㅔ':1};   /* �
 /* 배치표 : [x, y, w, h] (음절 로컬 0~1000) */
 var LAYOUT = {
   V: { noJong:{ cho:[80,225,380,450],  jung:[520,140,405,660] },
-       jong:  { cho:[60,118,330,400],  jung:[452,92,478,470], jong:[200,640,600,315] } },
+       jong:  { cho:[62,112,335,405],  jung:[455,95,470,455], jong:[330,648,350,292] } },
   H: { noJong:{ cho:[250,170,500,350], jung:[110,560,780,235] },
-       jong:  { cho:[235,90,530,325],  jung:[110,470,780,165], jong:[200,660,600,300] } }
+       jong:  { cho:[235,88,530,320],  jung:[110,462,780,165], jong:[330,650,350,292] } }
 };
 function decompose(ch){
   var code = ch.charCodeAt(0) - 0xAC00;
@@ -748,7 +748,10 @@ function onDown(e){
       var q = model.strokes[i].pts[0];
       if(Math.hypot(p[0]-q[0], p[1]-q[1]) < tolStart){ hit = i; break; }
     }
-    if(hit >= 0 && hit > model.idx){
+    var lastPt = st.pts[st.pts.length-1];
+    if(Math.hypot(p[0]-lastPt[0], p[1]-lastPt[1]) < tolStart){
+      toast('여기는 끝이에요! ' + (model.idx+1) + '번 동그라미에서 시작해요!');
+    } else if(hit >= 0 && hit > model.idx){
       toast('여기는 ' + (hit+1) + '번 획이에요. ' + (model.idx+1) + '번부터 써 볼까요?');
     } else {
       toast((model.idx+1) + '번 동그라미에서 시작해요!');
@@ -1082,15 +1085,17 @@ if(new URLSearchParams(location.search).has('test')){
           clientX: pt.x, clientY: pt.y, buttons: type === 'pointerup' ? 0 : 1
         }));
       };
-      var first = pointAt(st, from);
-      ev('pointerdown', toClient([first[0] + off[0], first[1] + off[1]]));
+      var anchor = pointAt(st, opts.flip ? from : 0);
+      var aim = function(p){
+        if(opts.flip) return [2*anchor[0]-p[0] + off[0], 2*anchor[1]-p[1] + off[1]];
+        return [p[0] + off[0], p[1] + off[1]];
+      };
+      ev('pointerdown', toClient(aim(pointAt(st, from))));
       for(var i=1;i<=n;i++){
         var t = from + (to - from) * (i/n);
-        var p = pointAt(st, t);
-        ev('pointermove', toClient([p[0] + off[0], p[1] + off[1]]));
+        ev('pointermove', toClient(aim(pointAt(st, t))));
       }
-      var last = pointAt(st, to);
-      ev('pointerup', toClient([last[0] + off[0], last[1] + off[1]]));
+      ev('pointerup', toClient(aim(pointAt(st, to))));
       return { word: model.word, idx: model.idx, total: model.strokes.length };
     },
     state: function(){
