@@ -351,6 +351,13 @@ var LAYOUT = {
   M: { noJong:{ cho:[70,110,400,400], jung:[230,80,690,780] },
        jong:  { cho:[60,80,360,340],  jung:[200,60,660,520], jong:[330,648,350,292] } }
 };
+/* 복합모음 배치 : ㅗ계열은 초성 아래로 걸치고, ㅜ·ㅡ계열은 초성 오른쪽에서 시작 */
+var MIX_RECT = {
+  low: { noJong:[240,80,680,780], jong:[210,60,650,520] },
+  mid: { noJong:[440,80,460,780], jong:[410,60,430,520] }
+};
+var MIX_KIND = {'ㅘ':'low','ㅙ':'low','ㅚ':'low','ㅝ':'mid','ㅞ':'mid','ㅟ':'mid','ㅢ':'mid'};
+
 function decompose(ch){
   var code = ch.charCodeAt(0) - 0xAC00;
   if(code < 0 || code > 11171) return null;
@@ -382,9 +389,11 @@ function buildLetter(ch){
   conf = hasJong ? conf.jong : conf.noJong;
   var order = [['cho',d.cho],['jung',d.jung]];
   if(hasJong) order.push(['jong',d.jong]);
+  var jmix = isMix ? (hasJong ? MIX_RECT[MIX_KIND[d.jung]].jong : MIX_RECT[MIX_KIND[d.jung]].noJong) : null;
   var out = [];
   for(var o=0;o<order.length;o++){
-    var key = order[o][0], jamo = order[o][1], r = conf[key];
+    var key = order[o][0], jamo = order[o][1];
+    var r = (key === 'jung' && isMix) ? jmix : conf[key];
     if(!r || !jamo) continue;
     var bw = (key === 'jung' && isMix) ? 200 : 100;
     var strokes = jamoStrokes(jamo);
