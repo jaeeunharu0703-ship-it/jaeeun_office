@@ -295,7 +295,21 @@ function decompose(ch){
 }
 function buildLetter(ch){
   var d = decompose(ch);
-  if(!d) return [];
+  if(!d){
+    /* 낱자(자음·모음) 하나만 쓰는 경우 */
+    if(JAMO[ch] || COMPOSITE[ch]){
+      var box;
+      if(V_VOWELS[ch]) box = [300,120,400,760];
+      else if('ㅗㅛㅜㅠㅡ'.indexOf(ch) >= 0) box = [140,340,720,300];
+      else box = [175,175,650,650];
+      return jamoStrokes(ch).map(function(s){
+        return { key:'cho', closed:s.closed, lw:90, pts:s.pts.map(function(p){
+          return [ box[0] + p[0]/100*box[2], box[1] + p[1]/100*box[3] ];
+        })};
+      });
+    }
+    return [];
+  }
   var isV = !!V_VOWELS[d.jung];
   var hasJong = !!d.jong;
   var conf = isV ? LAYOUT.V : LAYOUT.H;
@@ -543,14 +557,15 @@ function buildWord(word){
     regions.push({ x0:x0, w:regionW });
     buildLetter(ch).forEach(function(p){
       strokes.push({
-        key: p.key, closed: p.closed, sylScale: s,
+        key: p.key, closed: p.closed, sylScale: s, lw: p.lw,
         pts: p.pts.map(function(pt){ return [ x0 + pt[0]*s, pt[1]*s ]; })
       });
     });
   });
   strokes.forEach(function(st, i){
     st.idx = i;
-    st.lw = (st.key === 'jong' ? 37 : 46) * s;
+    if(st.lw == null) st.lw = (st.key === 'jong' ? 37 : 46) * s;
+    else st.lw = st.lw * s;
     prep(st);
   });
   return { word: word, s: s, strokes: strokes, regions: regions };
@@ -566,7 +581,7 @@ function openLetter(i){
   attempt = null;
   animating = false; demoIndex = -1; demoProgress = 0;
   wLetter.textContent = it.ch;
-  wParts.textContent = partLabel(it.ch);
+  wParts.textContent = partLabel(it.ch) || it.name || '';
   showView('write');
   btnPrev.disabled = i <= 0;
   btnNext.disabled = i >= curList.length - 1;
@@ -880,7 +895,7 @@ function completeLetter(){
   var last = curIndex >= curList.length - 1;
   var nbtn = document.getElementById('cheerNext');
   nbtn.textContent = last ? '목록으로 →' : '다음 글자 →';
-  cheerTimer = setTimeout(autoNext, 4200);
+  cheerTimer = setTimeout(autoNext, 5200);
 }
 function autoNext(){
   clearTimeout(cheerTimer);
@@ -1100,7 +1115,8 @@ if(new URLSearchParams(location.search).has('test')){
     },
     state: function(){
       return { idx: model ? model.idx : -1, total: model ? model.strokes.length : 0, cheer: !document.getElementById('cheer').hidden, stars: data.total };
-    }
+    },
+    holdCheer: function(){ clearTimeout(cheerTimer); return true; }
   };
 }
 
