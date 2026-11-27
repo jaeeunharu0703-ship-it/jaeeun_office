@@ -1155,7 +1155,7 @@ function sfx(kind){
 /* ---------------------------------------------------------------
    연필 사각사각 소리  (루프 노이즈 + 밴드패스, 움직일 때만)
    --------------------------------------------------------------- */
-var pen = { ready:false, src:null, gain:null, filt:null, lastX:0, lastY:0, lastPT:0, lastMove:0, target:0, raf:0 };
+var pen = { ready:false, src:null, gain:null, filt:null, lastX:0, lastY:0, lastPT:0, lastMove:0, target:0, peak:0, raf:0 };
 function penEnsure(){
   var a = audio();
   if(!a) return false;
@@ -1191,7 +1191,7 @@ function penStart(e){
   var a = ac;
   var now = performance.now();
   pen.lastX = e.clientX; pen.lastY = e.clientY;
-  pen.lastPT = now; pen.lastMove = now; pen.target = 0.02;
+  pen.lastPT = now; pen.lastMove = now; pen.target = 0.02; pen.peak = 0;
   try {
     pen.gain.gain.cancelScheduledValues(a.currentTime);
     pen.gain.gain.setTargetAtTime(0.02, a.currentTime, 0.02);
@@ -1207,6 +1207,7 @@ function penMove(e){
   var spd = dist / dt;                       /* px / ms */
   pen.lastX = e.clientX; pen.lastY = e.clientY; pen.lastPT = now; pen.lastMove = now;
   pen.target = Math.min(0.16, 0.018 + Math.min(1.6, spd) * 0.078);
+  if(pen.target > pen.peak) pen.peak = pen.target;
   try {
     pen.gain.gain.setTargetAtTime(pen.target, a.currentTime, 0.045);
     pen.filt.frequency.setTargetAtTime(1900 + Math.min(1400, spd * 700), a.currentTime, 0.07);
@@ -1595,6 +1596,7 @@ if(new URLSearchParams(location.search).has('test')){
         penReady: pen.ready,
         penGain: pen.ready ? +pen.gain.gain.value.toFixed(4) : -1,
         penTarget: +pen.target.toFixed(4),
+        penPeak: +pen.peak.toFixed(4),
         stored: (function(){ try { return localStorage.getItem(BGM_KEY); } catch(e){ return null; } })()
       };
     },
@@ -1623,6 +1625,16 @@ if(new URLSearchParams(location.search).has('test')){
       return out;
     }
   };
+  /* 검증용: ?test=1 로 열었을 때만 보이는 버튼 */
+  var tb = document.createElement('button');
+  tb.id = 'tTrace';
+  tb.textContent = 'TEST';
+  tb.style.cssText = 'position:fixed;left:0;bottom:0;z-index:99;font-size:9px;opacity:.25;padding:4px 6px;border:0;border-radius:8px;background:#fff;';
+  tb.addEventListener('click', function(){
+    window.__t.trace(0);
+    window.__t.holdCheer();
+  });
+  document.body.appendChild(tb);
 }
 
 })();
