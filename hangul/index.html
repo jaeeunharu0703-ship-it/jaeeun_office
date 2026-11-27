@@ -1127,7 +1127,12 @@ function audio(){
   if(!ac){
     try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ ac = null; }
   }
-  if(ac && ac.state === 'suspended'){ try { ac.resume(); } catch(e){} }
+  if(ac && ac.state !== 'running'){
+    try {
+      var r = ac.resume();
+      if(r && r.catch) r.catch(function(){});
+    } catch(e){}
+  }
   return ac;
 }
 function tone(freq, dur, when, vol, type){
@@ -1191,10 +1196,10 @@ function penStart(e){
   var a = ac;
   var now = performance.now();
   pen.lastX = e.clientX; pen.lastY = e.clientY;
-  pen.lastPT = now; pen.lastMove = now; pen.target = 0.02; pen.peak = 0;
+  pen.lastPT = now; pen.lastMove = now; pen.target = 0.026; pen.peak = 0;
   try {
     pen.gain.gain.cancelScheduledValues(a.currentTime);
-    pen.gain.gain.setTargetAtTime(0.02, a.currentTime, 0.02);
+    pen.gain.gain.setTargetAtTime(0.026, a.currentTime, 0.02);
   } catch(err){}
   if(!pen.raf) pen.raf = requestAnimationFrame(penLoop);
 }
@@ -1206,7 +1211,7 @@ function penMove(e){
   var dist = Math.hypot(e.clientX - pen.lastX, e.clientY - pen.lastY);
   var spd = dist / dt;                       /* px / ms */
   pen.lastX = e.clientX; pen.lastY = e.clientY; pen.lastPT = now; pen.lastMove = now;
-  pen.target = Math.min(0.16, 0.018 + Math.min(1.6, spd) * 0.078);
+  pen.target = Math.min(0.24, 0.024 + Math.min(1.6, spd) * 0.115);
   if(pen.target > pen.peak) pen.peak = pen.target;
   try {
     pen.gain.gain.setTargetAtTime(pen.target, a.currentTime, 0.045);
@@ -1275,6 +1280,7 @@ var SONG = {
     [62,88,.5],[62.5,91,.45],[63,96,.4]
   ]
 };
+var BGM_LEVEL = 0.92;   /* 배경음 전체 볼륨 */
 var bgm = { on:true, gain:null, timer:null, next:0, beat:0, playing:false, spb:60/68 };
 try { bgm.on = (localStorage.getItem(BGM_KEY) !== 'off'); } catch(e){}
 function bgmSave(){ try { localStorage.setItem(BGM_KEY, bgm.on ? 'on' : 'off'); } catch(e){} }
@@ -1312,26 +1318,26 @@ function bgmScheduleBeat(beat, t){
   var spb = bgm.spb, i, n;
   for(i = 0; i < SONG.mel.length; i++){
     n = SONG.mel[i];
-    if(n[0] === beat) bgmNote(t, n[1], Math.max(0.95, n[2] * spb * 1.3), 0.085 * (n[3] || 1), 0.22);
+    if(n[0] === beat) bgmNote(t, n[1], Math.max(0.95, n[2] * spb * 1.3), 0.115 * (n[3] || 1), 0.22);
   }
   for(i = 0; i < SONG.bass.length; i++){
     n = SONG.bass[i];
-    if(n[0] === beat) bgmNote(t, n[1], 3.2, 0.062, 0.05);
+    if(n[0] === beat) bgmNote(t, n[1], 3.2, 0.085, 0.05);
   }
   for(i = 0; i < SONG.fifth.length; i++){
     n = SONG.fifth[i];
-    if(n[0] === beat) bgmNote(t, n[1], 1.8, 0.032, 0.04);
+    if(n[0] === beat) bgmNote(t, n[1], 1.8, 0.042, 0.04);
   }
   for(i = 0; i < SONG.spark.length; i++){
     n = SONG.spark[i];
-    if(n[0] === beat) bgmNote(t, n[1], 1.6, 0.05 * (n[2] || 1), 0.3);
+    if(n[0] === beat) bgmNote(t, n[1], 1.6, 0.07 * (n[2] || 1), 0.3);
   }
 }
 var BGM_GRID = 0.5;
 function bgmTick(){
   var a = ac;
   if(!a || !bgm.playing || !bgm.gain) return;
-  if(a.state === 'suspended'){ try { a.resume(); } catch(e){} }
+  if(a.state !== 'running'){ try { a.resume(); } catch(e){} }
   if(bgm.next < a.currentTime - 0.6) bgm.next = a.currentTime + 0.06;   /* 잠든 사이 밀린 음은 건너뜀 */
   var guard = 0;
   while(bgm.next < a.currentTime + 0.85 && guard++ < 24){
@@ -1345,19 +1351,24 @@ function bgmPlay(){
   if(!bgmInit()) return;
   var a = ac;
   bgm.on = true;
+  if(a.state !== 'running'){ try { a.resume(); } catch(e){} }
   if(!bgm.timer){
     bgm.beat = 0;
-    bgm.next = a.currentTime + 0.2;
+    bgm.next = a.currentTime + 0.04;
     bgm.playing = true;
     try {
       bgm.gain.gain.cancelScheduledValues(a.currentTime);
       bgm.gain.gain.setValueAtTime(Math.max(0.0001, bgm.gain.gain.value), a.currentTime);
-      bgm.gain.gain.setTargetAtTime(0.55, a.currentTime, 0.7);
+      bgm.gain.gain.setTargetAtTime(BGM_LEVEL, a.currentTime, 0.45);
     } catch(e){}
-    bgm.timer = setInterval(bgmTick, 120);
+    bgm.timer = setInterval(bgmTick, 110);
     bgmTick();
   } else {
     bgm.playing = true;
+    try {
+      /* 잠자다 돌아온 iOS 에서 볼륨이 내려가 있으면 다시 올림 */
+      if(bgm.gain.gain.value < BGM_LEVEL * 0.6) bgm.gain.gain.setTargetAtTime(BGM_LEVEL, a.currentTime, 0.4);
+    } catch(e){}
   }
 }
 function bgmPause(){
@@ -1384,27 +1395,52 @@ function bgmPaint(){
 if(btnMusic){
   btnMusic.addEventListener('click', function(e){
     e.stopPropagation();
+    /* iOS: 반드시 이 클릭 핸들러 안에서 동기적으로 오디오를 깨우고 첫 음을 올린다 */
+    unlockAudio(true);
     bgm.on = !bgm.on;
     bgmSave(); bgmPaint();
-    if(bgm.on){ audio(); bgmPlay(); } else { bgmPause(); }
+    if(bgm.on){ bgmPlay(); } else { bgmPause(); }
     sfx('tap');
   });
 }
-/* iOS : 첫 사용자 제스처에서 오디오를 깨우고 음악을 시작 */
-var audioUnlocked = false;
-function unlockAudio(){
-  if(audioUnlocked) return;
-  audioUnlocked = true;
-  audio();
+/* iOS/iPadOS : 사용자 제스처에서 오디오 세션을 확실히 연다 */
+var audioUnlocked = false, lastUnlock = 0;
+function unlockAudio(force){
+  var a = audio();
+  if(!a) return;
+  var now = Date.now();
+  /* 무음 1샘플 재생 : iOS Safari 오디오 세션 활성화의 표준 방법 */
+  if(force || now - lastUnlock > 300){
+    lastUnlock = now;
+    try {
+      var b = a.createBuffer(1, 1, 22050);
+      var s = a.createBufferSource();
+      s.buffer = b;
+      s.connect(a.destination);
+      s.start(0);
+    } catch(e){}
+  }
+  if(a.state === 'running') audioUnlocked = true;
   if(bgm.on) bgmPlay();
 }
-document.addEventListener('pointerdown', unlockAudio, { capture:true, passive:true });
-document.addEventListener('keydown', unlockAudio);
-document.addEventListener('touchend', unlockAudio, { capture:true, passive:true });
+document.addEventListener('pointerdown', function(){ unlockAudio(); }, { capture:true, passive:true });
+document.addEventListener('touchstart', function(){ unlockAudio(); }, { capture:true, passive:true });
+document.addEventListener('touchend', function(){ unlockAudio(); }, { capture:true, passive:true });
+document.addEventListener('click', function(){ unlockAudio(); }, { capture:true, passive:true });
+document.addEventListener('keydown', function(){ unlockAudio(); });
 document.addEventListener('visibilitychange', function(){
   if(document.hidden) return;
   if(bgm.on){ audio(); bgmPlay(); }
 });
+/* speechSynthesis·화면 잠김 뒤 iOS 가 오디오를 놓으면 스스로 되살림 */
+setInterval(function(){
+  if(!ac) return;
+  if(ac.state !== 'running'){
+    try { ac.resume(); } catch(e){}
+  } else if(bgm.on && !bgm.timer){
+    bgmPlay();
+  }
+}, 2000);
 window.addEventListener('blur', penStop);
 bgmPaint();
 
@@ -1421,6 +1457,16 @@ function speak(text){
       if((vs[i].lang || '').toLowerCase().indexOf('ko') === 0){ u.voice = vs[i]; break; }
     }
     window.speechSynthesis.speak(u);
+    /* iOS는 말하기가 끝난 뒤 오디오 세션을 놓는 경우가 있어 다시 열아 준다 */
+    var restore = function(){
+      setTimeout(function(){
+        if(!ac) return;
+        if(ac.state !== 'running'){ try { ac.resume(); } catch(e){} }
+        if(bgm.on && !bgm.timer) bgmPlay();
+      }, 260);
+    };
+    u.onend = restore;
+    u.onerror = restore;
   } catch(e){}
 }
 function letterSpeech(){
