@@ -551,14 +551,15 @@ function buildWord(word){
   var gap = n > 1 ? 80 : 0;
   var regionW = (1000 - gap*(n-1)) / n;
   var s = regionW / 1000;
+  var yOff = (1000 - regionW) / 2;
   var strokes = [], regions = [];
   chars.forEach(function(ch, si){
     var x0 = si * (regionW + gap);
-    regions.push({ x0:x0, w:regionW });
+    regions.push({ x0:x0, w:regionW, y0:yOff });
     buildLetter(ch).forEach(function(p){
       strokes.push({
         key: p.key, closed: p.closed, sylScale: s, lw: p.lw,
-        pts: p.pts.map(function(pt){ return [ x0 + pt[0]*s, pt[1]*s ]; })
+        pts: p.pts.map(function(pt){ return [ x0 + pt[0]*s, yOff + pt[1]*s ]; })
       });
     });
   });
@@ -624,14 +625,14 @@ function render(){
       ctx.save();
       ctx.strokeStyle = '#F1DFCC';
       ctx.lineWidth = 3;
-      roundRect(ctx, r.x0 + 22, 22, r.w - 44, 956, 26);
+      roundRect(ctx, r.x0 + 22, r.y0 + 22, r.w - 44, r.w - 44, 26);
       ctx.stroke();
       ctx.setLineDash([13, 15]);
       ctx.strokeStyle = '#F7E9DA';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(r.x0 + r.w/2, 30); ctx.lineTo(r.x0 + r.w/2, 970);
-      ctx.moveTo(r.x0 + 30, 500); ctx.lineTo(r.x0 + r.w - 30, 500);
+      ctx.moveTo(r.x0 + r.w/2, r.y0 + 30); ctx.lineTo(r.x0 + r.w/2, r.y0 + r.w - 30);
+      ctx.moveTo(r.x0 + 30, r.y0 + r.w/2); ctx.lineTo(r.x0 + r.w - 30, r.y0 + r.w/2);
       ctx.stroke();
       ctx.restore();
     });
