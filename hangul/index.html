@@ -41,8 +41,7 @@ h1{font-size:17.5px; margin:0; letter-spacing:-.5px; font-weight:800;}
 .sub{margin:0; font-size:11.5px; color:var(--ink2);}
 .stars{margin-left:auto; display:flex; align-items:center; gap:5px; background:#fff; border:1.5px solid var(--line); border-radius:999px; padding:6px 12px; font-weight:800; font-size:14px; box-shadow:var(--shadow-s);}
 .stars b{color:var(--pink-d);}
-.tabs{display:flex; gap:6px; padding:8px 12px 2px; overflow-x:auto; flex:0 0 auto; scrollbar-width:none;}
-.tabs::-webkit-scrollbar{display:none;}
+.tabs{display:flex; gap:6px; padding:8px 12px 2px; overflow-x:auto; flex:0 0 auto; scrollbar-width:none;}.tabs::-webkit-scrollbar{display:none;}
 .tab{flex:0 0 auto; border:1.5px solid var(--line); background:#fff; color:var(--ink2); border-radius:999px; padding:7px 13px; font-size:13px; font-weight:800; transition:.15s;}
 .tab.on{background:var(--pink); border-color:var(--pink); color:#fff; box-shadow:0 4px 12px rgba(255,127,163,.32);}
 .main{flex:1 1 auto; min-height:0; position:relative;}
@@ -75,6 +74,34 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
 .navrow button{border:1.5px solid var(--line); background:#fff; border-radius:13px; padding:8px 14px; font-size:12.5px; font-weight:800; color:var(--ink); box-shadow:var(--shadow-s);}
 .navrow button:disabled{opacity:.35;}
 .navrow .prog{font-size:12px; font-weight:800; color:var(--ink2);}
+
+/* 요약 바 */
+.summary{display:flex; align-items:center; gap:6px; padding:6px 14px 0; flex:0 0 auto; overflow:hidden;}
+.chip{flex:0 0 auto; background:#fff; border:1.5px solid var(--line); border-radius:999px; padding:4px 10px; font-size:11.5px; font-weight:800; color:var(--ink2); box-shadow:var(--shadow-s);}
+.chip b{color:var(--pink-d); font-size:12.5px;}
+.todayline{flex:1 1 auto; min-width:0; font-size:11px; color:var(--ink2); font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-left:2px;}
+
+/* 출석 도장판 */
+.today-chips{display:flex; flex-wrap:wrap; gap:6px; padding:6px 14px 0;}
+.tchip{background:#FFF1F6; border:1.5px solid #FFDDE9; color:var(--pink-d); border-radius:999px; padding:5px 11px; font-size:13.5px; font-weight:800;}
+.tempty{font-size:12px; color:var(--ink2); font-weight:700; padding:4px 2px;}
+.cal-head{display:flex; align-items:center; justify-content:space-between; padding:12px 16px 6px;}
+.cal-head .t{font-size:14px; font-weight:800; color:var(--ink);}
+.cal-head button{border:1.5px solid var(--line); background:#fff; border-radius:11px; width:34px; height:34px; font-size:12px; font-weight:800; color:var(--ink); box-shadow:var(--shadow-s);}
+.cal-head button:disabled{opacity:.28;}
+.cal{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; padding:0 12px;}
+.cal .dow{text-align:center; font-size:10.5px; font-weight:800; color:var(--ink2); padding:2px 0 3px;}
+.cal .dow.sun{color:#E9836F;}
+.cal .cell{height:54px; border-radius:13px; background:#fff; border:1.5px solid var(--line); position:relative; display:flex; align-items:center; justify-content:center;}
+.cal .cell.off{background:transparent; border-color:transparent;}
+.cal .dn{position:absolute; top:3px; left:6px; font-size:9.5px; font-weight:800; color:var(--ink2);}
+.cal .cell.today{border-color:var(--pink); box-shadow:0 0 0 3px var(--pink-l);}
+.cal .cell.today .dn{color:var(--pink-d);}
+.cal .stamp{width:33px; height:33px; border-radius:50%; object-fit:cover; object-position:50% 16%; border:2.5px solid #FFD3E0; transform:rotate(-7deg); box-shadow:0 3px 8px rgba(255,127,163,.26); margin-top:5px;}
+.stats{display:flex; gap:8px; padding:14px 14px 2px;}
+.stat{flex:1 1 0; background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:10px 4px; text-align:center; box-shadow:var(--shadow-s);}
+.stat .k{font-size:10.5px; color:var(--ink2); font-weight:800; white-space:nowrap;}
+.stat .v{font-size:17px; font-weight:800; color:var(--pink-d);}
 
 /* sticker book */
 .sb-head{display:flex; align-items:center; gap:12px; margin:12px 14px 4px; padding:16px; background:linear-gradient(150deg,#FFF3F7,#FFF9EE); border:1.5px solid #FFE1EA; border-radius:22px; box-shadow:var(--shadow-s);}
@@ -110,6 +137,12 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
     <div class="stars" title="모은 별">⭐ <b id="starTotal">0</b></div>
   </header>
 
+  <div class="summary" id="summary">
+    <span class="chip">📅 오늘 <b id="sumToday">0</b>글자</span>
+    <span class="chip">🔥 연속 <b id="sumStreak">0</b>일</span>
+    <span class="todayline" id="sumChars">오늘 쓴 글자: 아직 없어요</span>
+  </div>
+
   <nav class="tabs" id="tabs"></nav>
 
   <main class="main">
@@ -143,14 +176,30 @@ canvas#pad{display:block; background:#FFFDFA; border-radius:26px; box-shadow:var
       </div>
     </section>
 
-    <!-- 스티커북 -->
+    <!-- 출석·스티커 -->
     <section class="view" id="viewStar" hidden>
       <div class="scroll">
         <div class="sb-head">
-          <div class="big">⭐</div>
-          <div><div class="t">내가 모은 별</div><div class="v"><span id="sbTotal">0</span> 개</div></div>
+          <div class="big" id="sbEmoji">📅</div>
+          <div><div class="t">오늘 공부한 글자</div><div class="v"><span id="sbToday">0</span> 글자</div></div>
           <div class="big" style="margin-left:auto">🎀</div>
         </div>
+        <div class="today-chips" id="todayChips"></div>
+
+        <div class="cal-head">
+          <button id="calPrev" aria-label="이전 달">◀</button>
+          <div class="t" id="calTitle">2026년 11월</div>
+          <button id="calNext" aria-label="다음 달">▶</button>
+        </div>
+        <div class="cal" id="cal"></div>
+
+        <div class="stats">
+          <div class="stat"><div class="k">🔥 연속 출석</div><div class="v"><span id="stStreak">0</span>일</div></div>
+          <div class="stat"><div class="k">🎯 총 출석</div><div class="v"><span id="stDays">0</span>일</div></div>
+          <div class="stat"><div class="k">⭐ 모은 별</div><div class="v"><span id="sbTotal">0</span>개</div></div>
+        </div>
+
+        <div class="sec-title">🌈 내가 쓴 글자 도감</div>
         <div class="grid" id="starGrid"></div>
         <div class="empty" id="starEmpty">아직 스티커가 없어요.<br>글자를 하나 완성하면 별이 쌓여요!</div>
       </div>
@@ -235,7 +284,16 @@ var JAMO = {
   'ㅡ': [S([[6,50],[94,50]])],
   'ㅣ': [S([[50,6],[50,94]])],
   'ㅐ': [S([[26,8],[26,94]]), S([[26,50],[62,50]]), S([[86,8],[86,94]])],
-  'ㅔ': [S([[6,50],[54,50]]), S([[54,8],[54,94]]), S([[86,8],[86,94]])]
+  'ㅔ': [S([[6,50],[54,50]]), S([[54,8],[54,94]]), S([[86,8],[86,94]])],
+  'ㅒ': [S([[16,8],[16,94]]), S([[16,32],[50,32]]), S([[16,66],[50,66]]), S([[82,8],[82,94]])],
+  'ㅖ': [S([[6,32],[44,32]]), S([[6,66],[44,66]]), S([[44,8],[44,94]]), S([[80,8],[80,94]])],
+  'ㅘ': [S([[38,42],[38,70]]), S([[8,70],[66,70]]), S([[66,6],[66,94]]), S([[66,48],[94,48]])],
+  'ㅙ': [S([[28,42],[28,70]]), S([[6,70],[54,70]]), S([[54,6],[54,94]]), S([[54,48],[78,48]]), S([[88,6],[88,94]])],
+  'ㅚ': [S([[40,42],[40,72]]), S([[8,72],[84,72]]), S([[84,6],[84,94]])],
+  'ㅝ': [S([[6,40],[74,40]]), S([[42,40],[42,66]]), S([[42,74],[74,74]]), S([[74,18],[74,94]])],
+  'ㅞ': [S([[4,38],[66,38]]), S([[34,38],[34,60]]), S([[30,68],[56,68]]), S([[56,20],[56,94]]), S([[84,20],[84,94]])],
+  'ㅟ': [S([[6,40],[84,40]]), S([[44,40],[44,66]]), S([[84,6],[84,94]])],
+  'ㅢ': [S([[6,60],[84,60]]), S([[84,6],[84,94]])]
 };
 
 /* 겹자음·겹받침 : [낱자, x이동, y이동, x배율, y배율] 순서대로 이어 씀 */
@@ -279,7 +337,7 @@ function jamoStrokes(name){
 var CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 var JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
 var JONG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-var V_VOWELS = {'ㅏ':1,'ㅑ':1,'ㅓ':1,'ㅕ':1,'ㅣ':1,'ㅐ':1,'ㅔ':1};   /* 세로 모음 */
+var V_VOWELS = {'ㅏ':1,'ㅑ':1,'ㅓ':1,'ㅕ':1,'ㅣ':1,'ㅐ':1,'ㅔ':1,'ㅒ':1,'ㅖ':1,'ㅘ':1,'ㅙ':1,'ㅚ':1,'ㅝ':1,'ㅞ':1,'ㅟ':1,'ㅢ':1};
 /* 배치표 : [x, y, w, h] (음절 로컬 0~1000) */
 var LAYOUT = {
   V: { noJong:{ cho:[80,225,380,450],  jung:[520,140,405,660] },
@@ -401,38 +459,84 @@ var WORD_LIST = [
   ['감','🍊'],['굴','🐚'],['길','🛣️'],['몸','💪'],['병','🍶'],['딸','👧'],['닭','🐔'],['값','💰'],['삶','🌱']
 ];
 var EASY_LIST = [
-  ['아이','👶'],['나비','🦋'],['오리','🦆'],['여우','🦊'],['기차','🚂'],['하늘','☁️'],['바다','🌊'],
-  ['우유','🥛'],['모자','🧢'],['토끼','🐰'],['개미','🐜'],['다리','🦵'],['무','🥬'],['코','👃'],
-  ['나무','🌳'],['새','🐦']
+  ['아이','👶'],['아기','🍼'],['아빠','🧔'],['누나','👧'],['오빠','👦'],['이모','👩'],['고모','👩‍🦰'],['나','🙂'],
+  ['나비','🦋'],['나무','🌳'],['나라','🇰🇷'],['나이','🎂'],['다리','🦵'],['머리','💇'],['바다','🌊'],['바위','🪨'],
+  ['비누','🧼'],['비','🌧️'],['피','🩸'],['코','👃'],['무','🥬'],['새','🐦'],['배','🍐'],['개','🐶'],
+  ['소','🐄'],['차','🚗'],['파','🧅'],['이','🦷'],['노래','🎵'],['사자','🦁'],['여우','🦊'],['거미','🕷️'],
+  ['고래','🐋'],['고기','🍖'],['두부','🍲'],['포도','🍇'],['토끼','🐰'],['기차','🚂'],['지구','🌍'],['하마','🦛'],
+  ['파도','🏄'],['개미','🐜'],['새우','🍤'],['모자','🧢'],['미소','😊'],['모기','🦟'],['소라','🐚'],['시계','⏰'],
+  ['치즈','🧀'],['피자','🍕'],['자두','🍑'],['부채','🪭'],['수저','🥄'],['호수','🏞️'],['해','🌞'],['사과','🍎'],
+  ['치마','👗'],['게','🦀'],['코트','🧥'],['구두','👞'],['까치','🐦‍⬛'],['타조','🦤'],['쥐','🐭'],['체리','🍒'],
+  ['주스','🧃'],['과자','🍪'],['모래','🏖️'],['귀','👂'],['의자','🪑'],['가위','✂️'],['베개','🛏️'],['위','⬆️'],
+  ['왜','❓'],['오이','🥒'],['유리','🪟'],['우유','🥛'],['오리','🦆'],['의사','👨‍⚕️'],['세계','🌏'],['시소','🛝'],
+  ['미로','🌀'],['이유','💡'],['야구','⚾'],['요리','🍳'],['요요','🪀'],['재미','😄'],['지도','🗺️'],['커피','☕'],
+  ['노트','📓'],['가수','🎤'],['회사','🏢'],['네모','🔲'],['세모','🔺'],['도미','🐟'],['오후','🌤️'],['하루','📅'],
+  ['어제','🕰️'],['자주','🔁'],['모두','👐'],['사이','↔️']
+];
+/* 조금 더 연습 : 쌍자음·복합모음 낱자 + 아주 쉬운 ㅇ·ㄴ 받침 입문 */
+var PRACTICE_LIST = [
+  ['까',''],['꼬',''],['끼',''],['따',''],['떼',''],['또',''],['빠',''],['뽀',''],['싸',''],
+  ['씨',''],['짜',''],['쪼',''],['왜',''],['외',''],['위',''],['의',''],['와',''],['워',''],
+  ['방','🏠'],['종','🔔'],['콩','🫘'],['땅','🌏'],['공룡','🦕'],['문','🚪'],['반','🍚'],['돈','💰'],
+  ['잔','🥤'],['단추','🔘'],['안경','👓'],['인형','🧸'],['만두','🥟'],['왕','👑'],['냄비','🍲'],['잔디','🌿']
 ];
 
 var TABS = [
-  { id:'jaum', label:'ㄱ 자음', items: function(){
-      return CHO.map(function(c){ return {ch:c, name:JAUM_NAMES[c], emoji:''}; });
+  { id:'basic', label:'자음·모음', items: function(){
+      var a = CHO.map(function(c){ return {ch:c, name:JAUM_NAMES[c], emoji:''}; });
+      var b = Object.keys(MOEUM_SOUND).map(function(v){ return {ch:v, name:MOEUM_SOUND[v], emoji:''}; });
+      return a.concat(b);
     }},
-  { id:'moeum', label:'ㅏ 모음', items: function(){
-      return Object.keys(MOEUM_SOUND).map(function(v){ return {ch:v, name:MOEUM_SOUND[v], emoji:''}; });
-    }},
-  { id:'word', label:'🍎 받침 글자', items: function(){
-      return WORD_LIST.map(function(w){ return {ch:w[0], name:'', emoji:w[1]}; });
-    }},
-  { id:'easy', label:'🌱 쉬운 글자', items: function(){
+  { id:'easy', label:'쉬운 글자', items: function(){
       return EASY_LIST.map(function(w){ return {ch:w[0], name:'', emoji:w[1]}; });
     }},
-  { id:'star', label:'⭐ 스티커북', items: [] }
+  { id:'practice', label:'조금 더 연습', items: function(){
+      return PRACTICE_LIST.map(function(w){ return {ch:w[0], name:'', emoji:w[1]}; });
+    }},
+  { id:'word', label:'받침 글자', items: function(){
+      return WORD_LIST.map(function(w){ return {ch:w[0], name:'', emoji:w[1]}; });
+    }},
+  { id:'star', label:'⭐ 출석·스티커', items: [] }
 ];
 
 /* =====================================================================
    5. 상태 · 저장
    ===================================================================== */
 var KEY = 'yoonseo-hangul-v1';
-var data = { total:0, done:{} };
+var data = { total:0, done:{}, days:{} };
 try {
   var raw = localStorage.getItem(KEY);
-  if(raw){ var o = JSON.parse(raw); data = { total:o.total||0, done:o.done||{} }; }
+  if(raw){
+    var o = JSON.parse(raw);
+    data = { total:o.total||0, done:o.done||{}, days:o.days||{} };
+  }
 } catch(e){}
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e){}
+}
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
+function ymd(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
+function todayKey(){ return ymd(new Date()); }
+function dayRec(key){
+  if(!data.days[key]) data.days[key] = { n:0, chars:{} };
+  if(!data.days[key].chars) data.days[key].chars = {};
+  return data.days[key];
+}
+function dayOf(key){
+  var r = data.days[key];
+  if(!r || !r.chars) return { n:0, chars:{} };
+  return r;
+}
+function totalAttendance(){
+  var c = 0, k;
+  for(k in data.days){ if(data.days[k] && data.days[k].n > 0) c++; }
+  return c;
+}
+function streakDays(){
+  var d = new Date(), c = 0;
+  if(dayOf(ymd(d)).n === 0) d.setDate(d.getDate() - 1);   /* 오늘 아직 안 했으면 어제까지 */
+  while(dayOf(ymd(d)).n > 0){ c++; d.setDate(d.getDate() - 1); }
+  return c;
 }
 
 /* =====================================================================
@@ -494,6 +598,8 @@ function showView(name){
   viewList.hidden = name !== 'list';
   viewWrite.hidden = name !== 'write';
   viewStar.hidden = name !== 'star';
+  var s = document.getElementById('summary');
+  if(s) s.hidden = (name === 'write');
 }
 function starBadge(ch){
   var n = data.done[ch] || 0;
@@ -516,12 +622,18 @@ function renderCards(){
 function renderSticker(){
   starTotalEl.textContent = data.total;
   document.getElementById('sbTotal').textContent = data.total;
-  var all = [];
+  document.getElementById('sbToday').textContent = dayOf(todayKey()).n;
+  document.getElementById('stStreak').textContent = streakDays();
+  document.getElementById('stDays').textContent = totalAttendance();
+  renderTodayChips();
+  renderCal();
+
+  var all = [], seen = {};
   TABS.forEach(function(t){
     if(t.id === 'star') return;
     t.items().forEach(function(it){
       var n = data.done[it.ch];
-      if(n) all.push({ch:it.ch, n:n, emoji:it.emoji});
+      if(n && !seen[it.ch]){ seen[it.ch] = 1; all.push({ch:it.ch, n:n, emoji:it.emoji}); }
     });
   });
   all.sort(function(a,b){ return b.n - a.n; });
@@ -534,6 +646,53 @@ function renderSticker(){
                    '<div class="e">' + (it.emoji||'') + '</div>';
     starGrid.appendChild(el);
   });
+}
+function renderTodayChips(){
+  var rec = dayOf(todayKey());
+  var keys = Object.keys(rec.chars || {});
+  var host = document.getElementById('todayChips');
+  if(!keys.length){
+    host.innerHTML = '<span class="tempty">오늘은 아직 쓴 글자가 없어요. 하나 써 볼까요?</span>';
+    return;
+  }
+  host.innerHTML = keys.map(function(k){
+    var n = rec.chars[k];
+    return '<span class="tchip">' + k + (n > 1 ? ' ×' + n : '') + '</span>';
+  }).join('');
+}
+var calY = new Date().getFullYear(), calM = new Date().getMonth();
+function renderCal(){
+  var now = new Date();
+  var first = new Date(calY, calM, 1);
+  var startDow = first.getDay();
+  var lastDay = new Date(calY, calM + 1, 0).getDate();
+  var html = '';
+  ['일','월','화','수','목','금','토'].forEach(function(d, i){
+    html += '<div class="dow' + (i === 0 ? ' sun' : '') + '">' + d + '</div>';
+  });
+  for(var i = 0; i < startDow; i++) html += '<div class="cell off"></div>';
+  for(var d = 1; d <= lastDay; d++){
+    var key = calY + '-' + pad2(calM + 1) + '-' + pad2(d);
+    var rec = dayOf(key);
+    var isToday = (now.getFullYear() === calY && now.getMonth() === calM && now.getDate() === d);
+    html += '<div class="cell' + (isToday ? ' today' : '') + '">' +
+            '<span class="dn">' + d + '</span>' +
+            (rec.n > 0 ? '<img class="stamp" src="img/yoonseo-char.jpg" alt="출석 도장">' : '') +
+            '</div>';
+  }
+  document.getElementById('cal').innerHTML = html;
+  document.getElementById('calTitle').textContent = calY + '년 ' + (calM + 1) + '월';
+  document.getElementById('calNext').disabled = (calY === now.getFullYear() && calM === now.getMonth());
+}
+function updateSummary(){
+  var rec = dayOf(todayKey());
+  document.getElementById('sumToday').textContent = rec.n;
+  document.getElementById('sumStreak').textContent = streakDays();
+  var keys = Object.keys(rec.chars || {});
+  document.getElementById('sumChars').textContent = keys.length
+    ? '오늘: ' + keys.slice(0, 5).join(' ') + (keys.length > 5 ? ' 외 ' + (keys.length - 5) + '자' : '')
+    : '오늘 쓴 글자: 아직 없어요';
+  starTotalEl.textContent = data.total;
 }
 
 /* =====================================================================
@@ -889,8 +1048,12 @@ function completeLetter(){
   var ch = model.word;
   data.total = (data.total || 0) + 1;
   data.done[ch] = (data.done[ch] || 0) + 1;
+  var rec = dayRec(todayKey());
+  rec.n = (rec.n || 0) + 1;
+  rec.chars[ch] = (rec.chars[ch] || 0) + 1;
   save();
   starTotalEl.textContent = data.total;
+  updateSummary();
   sfx('win');
   speak(ch);
   clearTimeout(cheerTimer);
@@ -1051,6 +1214,16 @@ document.getElementById('cheerAgain').addEventListener('click', function(){
   if(model){ model.idx = 0; attempt = null; updateProgress(); render(); }
 });
 document.getElementById('cheerNext').addEventListener('click', autoNext);
+document.getElementById('calPrev').addEventListener('click', function(){
+  sfx('tap');
+  calM--; if(calM < 0){ calM = 11; calY--; }
+  renderCal();
+});
+document.getElementById('calNext').addEventListener('click', function(){
+  sfx('tap');
+  calM++; if(calM > 11){ calM = 0; calY++; }
+  renderCal();
+});
 
 /* 화면 크기 */
 if(window.ResizeObserver){
@@ -1067,8 +1240,9 @@ window.addEventListener('resize', function(){ if(!viewWrite.hidden) fitCanvas();
    15. 시작
    ===================================================================== */
 starTotalEl.textContent = data.total;
+updateSummary();
 renderTabs();
-gotoTab('jaum');
+gotoTab('basic');
 
 /* ---------------- 테스트 훅 (?test=1 로 열었을 때만) ---------------- */
 if(new URLSearchParams(location.search).has('test')){
@@ -1137,7 +1311,7 @@ if(new URLSearchParams(location.search).has('test')){
             }
             if(st.len < 8) tiny.push(st.idx);
           });
-          out.push({ch:it.ch, strokes:w.strokes.length, out:bad, tiny:tiny});
+          out.push({ch:it.ch, strokes:w.strokes.length, out:bad, tiny:tiny, empty:w.strokes.length === 0});
         });
       });
       return out;
