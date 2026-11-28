@@ -205,7 +205,7 @@ h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .petbubble{position:relative; margin:0 auto 6px; width:fit-content; max-width:94%; background:#fff; border:2px solid #FFDDE9; color:#D9567C; font-size:12.5px; font-weight:800; padding:8px 13px; border-radius:16px; text-align:center; box-shadow:var(--shadow-s); transition:transform .15s;}
 .petbubble:after{content:''; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%) rotate(45deg); width:12px; height:12px; background:#fff; border-right:2px solid #FFDDE9; border-bottom:2px solid #FFDDE9;}
 .petbubble.pop{animation:pop .35s cubic-bezier(.2,1.5,.4,1);}
-.petstage{position:relative; height:clamp(206px,36vh,318px); margin:2px 0 0; border-radius:24px; overflow:hidden; touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; cursor:grab;}
+.petstage{position:relative; height:clamp(212px,37vh,326px); margin:2px 0 0; border-radius:24px; overflow:hidden; touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; cursor:grab; background:radial-gradient(120% 92% at 50% 12%, #FFFDFB 0%, #FFF3EA 62%, #FFEEF5 100%); border:1.5px dashed #FFE1EA; box-shadow:inset 0 2px 10px rgba(226,150,110,.06);}
 .petstage.grabbing{cursor:grabbing;}
 .petstage:after{content:''; position:absolute; left:13%; right:13%; bottom:12px; height:15px; border-radius:50%; background:radial-gradient(ellipse at center, rgba(226,150,110,.20), rgba(226,150,110,0) 72%); pointer-events:none;}
 .petwrap{position:absolute; left:50%; top:50%; width:0; height:0; transition:transform .2s cubic-bezier(.2,.9,.3,1); will-change:transform;}
@@ -2425,7 +2425,7 @@ function petMove(e){
 
   if(!petPlay.mode){
     if(petPlay.rev >= 1 && petPlay.total > 16) petPlay.mode = 'rub';
-    else if(petPlay.total > 26 && (Date.now() - petPlay.t0) > 110) petPlay.mode = 'drag';
+    else if(petPlay.total > 26 && ((Date.now() - petPlay.t0) > 110 || petPlay.total > 70)) petPlay.mode = 'drag';
   }
 
   if(petPlay.mode === 'drag'){
@@ -2841,6 +2841,31 @@ if(new URLSearchParams(location.search).has('test')){
                face:(petImgEl ? petImgEl.getAttribute('src') : ''), flip:(petFlipEl ? petFlipEl.classList.contains('flip') : false) };
     },
     petPose: function(){ return { x:+petPlay.x.toFixed(1), y:+petPlay.y.toFixed(1), mode:petPlay.mode, down:petPlay.down }; },
+    /* 검증용: 실제 포인터 이벤트를 칠뗩이에 보내 쓰다듬기·끝기를 확인 */
+    petTouch: function(kind){
+      var img = document.getElementById('petImg');
+      if(!img) return 'no-pet';
+      var b = img.getBoundingClientRect();
+      var cx = b.left + b.width / 2, cy = b.top + b.height / 2;
+      var ev = function(type, x, y){
+        img.dispatchEvent(new PointerEvent(type, {
+          pointerId: 21, pointerType: 'touch', isPrimary: true, bubbles: true, cancelable: true,
+          clientX: x, clientY: y, buttons: type === 'pointerup' ? 0 : 1
+        }));
+      };
+      ev('pointerdown', cx, cy);
+      if(kind === 'drag'){
+        for(var i = 1; i <= 10; i++) ev('pointermove', cx + i * 12, cy + i * 1.5);
+        ev('pointerup', cx + 120, cy + 15);
+      } else if(kind === 'rub'){
+        for(var j = 0; j < 12; j++) ev('pointermove', cx + (j % 2 ? 30 : -30), cy + (j % 3 - 1) * 3);
+        ev('pointerup', cx, cy);
+      } else {
+        ev('pointerup', cx, cy);
+      }
+      return { mode:petPlay.mode, x:+petPlay.x.toFixed(1), y:+petPlay.y.toFixed(1),
+               happy:data.pet.happy, pets:data.pet.pets || 0, dayPets:data.pet.dayPets || 0 };
+    },
     feed: function(){
       var b = document.getElementById('btnFeed');
       if(!b || b.disabled) return 'no-bones';
