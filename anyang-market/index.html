@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>안양중앙시장 맛집 지도</title>
+<meta name="theme-color" content="#FFF7EC">
+<meta name="description" content="안양중앙시장 김밥·만두, 떡볶이, 칼국수·곱창, 닭강정·도넛 맛집과 주차장을 한눈에 보는 지도. 영업시간·휴무·가격·포장 팁까지.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="중앙시장 맛집">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%99%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css'">
+<style>
+:root{
+  --cream:#FFF7EC; --cream2:#FDEFDD; --card:#FFFDF9;
+  --ink:#3B2E24; --ink2:#7B6857; --ink3:#A79684;
+  --line:#F0DFCB; --line2:#E7D2BA;
+  --brand:#D9482B; --brand-d:#B93A20;
+  --shadow:0 8px 24px rgba(120,80,40,.12);
+  --shadow-s:0 3px 10px rgba(120,80,40,.10);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --sheet-h:0px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+[hidden]{display:none !important;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+  background:var(--cream); color:var(--ink); line-height:1.45;
+  -webkit-text-size-adjust:100%; overscroll-behavior:none;
+}
+button{font-family:inherit; cursor:pointer; border:0; background:none; color:inherit;}
+a{color:inherit; text-decoration:none;}
+.app{display:flex; flex-direction:column; height:100vh; height:100dvh; max-width:820px; margin:0 auto; position:relative; overflow:hidden;}
+
+/* ---------- header ---------- */
+header.top{
+  flex:0 0 auto; padding:calc(10px + env(safe-area-inset-top)) 14px 6px;
+  background:linear-gradient(180deg,#FFF9F0 0%,#FFF7EC 100%);
+  position:relative; z-index:30;
+}
+.hrow{display:flex; align-items:center; gap:10px;}
+.hlogo{
+  width:40px; height:40px; flex:0 0 auto; border-radius:14px;
+  background:linear-gradient(150deg,#FFE2C4,#FFCD9B);
+  display:grid; place-items:center; font-size:21px;
+  box-shadow:0 3px 10px rgba(200,130,60,.22);
+}
+.hd{min-width:0; flex:1 1 auto;}
+h1{font-size:18px; margin:0; letter-spacing:-.6px; font-weight:800;}
+.hsub{margin:1px 0 0; font-size:11.5px; color:var(--ink2); font-weight:600;}
+.seg{
+  flex:0 0 auto; display:flex; background:#fff; border:1.5px solid var(--line2);
+  border-radius:999px; padding:3px; box-shadow:var(--shadow-s);
+}
+.seg button{
+  border-radius:999px; padding:6px 11px; font-size:12px; font-weight:800; color:var(--ink2);
+  transition:.16s; line-height:1; display:flex; align-items:center; gap:4px;
+}
+.seg button.on{background:var(--brand); color:#fff; box-shadow:0 3px 9px rgba(217,72,43,.3);}
+
+/* ---------- chips ---------- */
+.chips{
+  flex:0 0 auto; display:flex; gap:6px; padding:7px 14px 0;
+  overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.chips::-webkit-scrollbar{display:none;}
+.chip{
+  flex:0 0 auto; display:flex; align-items:center; gap:5px;
+  background:#fff; border:1.5px solid var(--line2); color:var(--ink2);
+  border-radius:999px; padding:7px 12px; font-size:12.5px; font-weight:800;
+  box-shadow:var(--shadow-s); transition:.15s; white-space:nowrap;
+}
+.chip .e{font-size:13px; line-height:1;}
+.chip .n{font-size:11px; opacity:.62; font-weight:800;}
+.chip.on{color:#fff; border-color:transparent;}
+.chip.on .n{opacity:.85;}
+.coursebar{
+  flex:0 0 auto; display:flex; gap:6px; padding:6px 14px 8px;
+  overflow-x:auto; scrollbar-width:none;
+}
+.coursebar::-webkit-scrollbar{display:none;}
+.cchip{
+  flex:0 0 auto; display:flex; align-items:center; gap:5px;
+  background:linear-gradient(150deg,#FFF1E0,#FFE7CC);
+  border:1.5px dashed #EFC79A; color:#8A4A18;
+  border-radius:12px; padding:6px 11px; font-size:12px; font-weight:800; white-space:nowrap;
+}
+.cchip.on{background:linear-gradient(150deg,#3B2E24,#5B4433); border-color:#3B2E24; border-style:solid; color:#FFE9C9;}
+
+/* ---------- map / list ---------- */
+.main{flex:1 1 auto; min-height:0; position:relative; background:var(--cream2);}
+#map{position:absolute; inset:0; z-index:1; background:#EFE6D8;}
+.mapfail{
+  position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+  padding:30px; font-size:13.5px; color:var(--ink2); font-weight:700; line-height:1.6;
+}
+.leaflet-container{font-family:inherit;}
+.leaflet-control-attribution{font-size:9.5px !important; background:rgba(255,255,255,.82) !important;}
+.leaflet-control-zoom{border:0 !important; box-shadow:var(--shadow-s) !important; border-radius:12px !important; overflow:hidden;}
+.leaflet-control-zoom a{background:#fff !important; color:var(--ink) !important; border-color:var(--line) !important; width:34px !important; height:34px !important; line-height:32px !important; font-size:18px !important;}
+.leaflet-bottom.leaflet-right{margin-bottom:calc(6px + var(--safe-b));}
+
+/* pin */
+.pin{
+  width:34px; height:34px; border-radius:50%; background:var(--c,#666);
+  border:2.5px solid #fff; display:grid; place-items:center; position:relative;
+  box-shadow:0 4px 10px rgba(0,0,0,.28); font-size:16px; line-height:1;
+  transition:transform .12s;
+}
+.pin .num{
+  position:absolute; top:-7px; right:-7px; width:17px; height:17px; border-radius:999px;
+  background:#2A211A; color:#fff; font-size:10.5px; font-weight:800;
+  display:grid; place-items:center; border:1.5px solid #fff;
+}
+.pin.sel{transform:scale(1.22); box-shadow:0 6px 16px rgba(0,0,0,.36); z-index:999;}
+.pin.dim{opacity:.26; filter:grayscale(.55);}
+.pin.sel .num{background:var(--brand);}
+.leaflet-marker-icon:focus{outline:none;}
+
+/* my location */
+.locate{
+  position:absolute; right:12px; bottom:calc(28px + var(--safe-b)); z-index:20;
+  width:44px; height:44px; border-radius:50%; background:#fff;
+  border:1.5px solid var(--line2); box-shadow:var(--shadow);
+  display:grid; place-items:center; font-size:19px;
+}
+.locate:active{transform:scale(.94);}
+.locate.busy{opacity:.5;}
+body.course .locate{bottom:calc(96px + var(--safe-b));}
+.leaflet-top.leaflet-right{margin-top:8px; margin-right:6px;}
+
+/* course banner */
+.cbanner{
+  position:absolute; left:12px; right:12px; bottom:calc(28px + var(--safe-b)); z-index:21;
+  background:linear-gradient(150deg,#3B2E24,#5B4433); color:#FFE9C9;
+  border-radius:16px; padding:10px 12px; box-shadow:0 10px 26px rgba(0,0,0,.28);
+  display:flex; align-items:center; gap:10px;
+}
+.cbanner .t{flex:1 1 auto; min-width:0;}
+.cbanner b{display:block; font-size:13px; letter-spacing:-.3px;}
+.cbanner span{display:block; font-size:11px; opacity:.78; margin-top:1px;}
+.cbanner .go{
+  flex:0 0 auto; background:#FFE1B8; color:#5B3A16; border-radius:999px;
+  padding:7px 12px; font-size:12px; font-weight:800;
+}
+
+/* list */
+#list{
+  position:absolute; inset:0; z-index:2; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  background:var(--cream); padding-bottom:calc(20px + var(--safe-b));
+}
+.lwrap{padding:10px 14px 0;}
+.lhead{
+  display:flex; align-items:baseline; gap:8px; margin:14px 2px 8px;
+}
+.lhead .le{font-size:15px;}
+.lhead h2{font-size:13.5px; margin:0; font-weight:800; letter-spacing:-.3px;}
+.lhead .lc{font-size:11px; color:var(--ink3); font-weight:800; margin-left:auto;}
+.item{
+  display:flex; gap:11px; align-items:flex-start; width:100%; text-align:left;
+  background:var(--card); border:1.5px solid var(--line); border-radius:16px;
+  padding:11px 12px; margin-bottom:8px; box-shadow:var(--shadow-s);
+  border-bottom-width:3px; transition:transform .08s;
+}
+.item:active{transform:scale(.985);}
+.item .ico{
+  flex:0 0 auto; width:36px; height:36px; border-radius:12px; display:grid; place-items:center;
+  font-size:18px; background:var(--c); color:#fff;
+}
+.item .body{min-width:0; flex:1 1 auto;}
+.item h3{margin:0; font-size:14px; font-weight:800; letter-spacing:-.35px; display:flex; align-items:center; gap:5px;}
+.item h3 .num{
+  background:#2A211A; color:#fff; font-size:9.5px; font-weight:800;
+  border-radius:999px; width:15px; height:15px; display:grid; place-items:center; flex:0 0 auto;
+}
+.item p{margin:2px 0 0; font-size:11.8px; color:var(--ink2); font-weight:600; line-height:1.45;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+.item .meta{display:flex; flex-wrap:wrap; gap:5px; margin-top:6px;}
+.tag{
+  font-size:10.5px; font-weight:800; border-radius:7px; padding:2px 6px;
+  background:#FFF3E5; color:#8A5B2A; border:1px solid #F5E0C8;
+}
+.tag.warn{background:#FFEDE9; color:#B93A20; border-color:#F8D3C9;}
+.tag.open{background:#E9F7EF; color:#1E7A4D; border-color:#C9EBD8;}
+.note{font-size:10.8px; color:var(--ink3); font-weight:700; text-align:center; padding:14px 20px 0; line-height:1.6;}
+
+/* ---------- bottom sheet ---------- */
+.backdrop{
+  position:fixed; inset:0; background:rgba(40,28,18,.34); z-index:60;
+  opacity:0; pointer-events:none; transition:opacity .22s;
+}
+.backdrop.on{opacity:1; pointer-events:auto;}
+sheet{display:block;}
+.sheet{
+  position:fixed; left:0; right:0; bottom:0; z-index:70;
+  max-width:820px; margin:0 auto;
+  background:var(--card); border-radius:22px 22px 0 0;
+  box-shadow:0 -12px 34px rgba(60,40,20,.22);
+  transform:translateY(104%); transition:transform .27s cubic-bezier(.22,.8,.3,1);
+  max-height:86vh; max-height:86dvh; display:flex; flex-direction:column;
+  padding-bottom:var(--safe-b);
+}
+.sheet.on{transform:translateY(0);}
+.grab{flex:0 0 auto; padding:9px 0 3px; display:grid; place-items:center;}
+.grab i{display:block; width:40px; height:4px; border-radius:999px; background:var(--line2);}
+.sh-scroll{overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;}
+.sh-head{display:flex; gap:11px; padding:4px 16px 10px; align-items:flex-start;}
+.sh-ico{
+  width:46px; height:46px; flex:0 0 auto; border-radius:15px; display:grid; place-items:center;
+  font-size:23px; background:var(--c); color:#fff; box-shadow:var(--shadow-s);
+}
+.sh-title{min-width:0; flex:1 1 auto; padding-right:30px;}
+.sh-title h2{margin:0; font-size:18.5px; letter-spacing:-.7px; font-weight:800; line-height:1.25;}
+.sh-title .sum{margin:3px 0 0; font-size:12.5px; color:var(--ink2); font-weight:600; line-height:1.5;}
+.sh-close{
+  position:absolute; top:12px; right:12px; width:32px; height:32px; border-radius:50%;
+  background:var(--cream2); display:grid; place-items:center; font-size:15px; color:var(--ink2); font-weight:800;
+}
+.sh-body{padding:0 16px 16px;}
+.sect{margin-top:13px;}
+.sect h4{
+  margin:0 0 6px; font-size:11px; font-weight:800; letter-spacing:.4px; color:var(--ink3);
+  text-transform:uppercase;
+}
+.kv{display:flex; gap:8px; align-items:flex-start; font-size:13px; font-weight:600; margin-bottom:5px;}
+.kv .k{flex:0 0 auto; width:44px; color:var(--ink3); font-size:11.5px; font-weight:800; padding-top:2px;}
+.kv .v{flex:1 1 auto; min-width:0; word-break:keep-all;}
+.kv .v b{font-weight:800;}
+.kv .v .sub{display:block; font-size:11px; color:var(--ink3); font-weight:700; margin-top:2px;}
+.hoursline{display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+.pill{font-size:11px; font-weight:800; border-radius:8px; padding:2px 7px;}
+.pill.closed{background:#FFEDE9; color:#B93A20;}
+.pill.unk{background:#F1EDE6; color:#8A7A67;}
+.menu{list-style:none; margin:0; padding:0; border:1.5px solid var(--line); border-radius:14px; overflow:hidden; background:#FFFCF6;}
+.menu li{display:flex; gap:10px; padding:8px 11px; font-size:13px; border-bottom:1px solid #F6EBDC;}
+.menu li:last-child{border-bottom:0;}
+.menu li span{flex:1 1 auto; font-weight:600;}
+.menu li b{flex:0 0 auto; font-weight:800; color:#8A4A18; font-variant-numeric:tabular-nums;}
+.tips{list-style:none; margin:0; padding:0;}
+.tips li{
+  position:relative; padding:0 0 0 17px; margin-bottom:6px; font-size:12.6px;
+  color:#5A4B3C; font-weight:600; line-height:1.5;
+}
+.tips li::before{
+  content:"•"; position:absolute; left:4px; top:-1px; color:var(--brand); font-weight:900; font-size:15px;
+}
+.acts{display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:15px;}
+.acts a{
+  display:flex; flex-direction:column; align-items:center; gap:3px; justify-content:center;
+  border-radius:13px; padding:10px 4px; font-size:11.5px; font-weight:800; line-height:1.15;
+  border:1.5px solid var(--line2); background:#fff; box-shadow:var(--shadow-s);
+}
+.acts a .ai{font-size:17px; line-height:1;}
+.acts a:active{transform:scale(.96);}
+.acts .kakao{background:#FEE500; border-color:#F2DA00; color:#3A1D1D;}
+.acts .naver{background:#03C75A; border-color:#03B151; color:#fff;}
+.acts .google{background:#fff; border-color:#E2D6C6; color:#3B6FD4;}
+.callrow{display:flex; gap:7px; margin-top:8px;}
+.callrow a{
+  flex:1 1 auto; text-align:center; border-radius:12px; padding:9px; font-size:12.5px; font-weight:800;
+  border:1.5px solid var(--line2); background:#FFF9F0; color:var(--ink2);
+}
+.stamp{font-size:10.5px; color:var(--ink3); font-weight:700; margin-top:14px; line-height:1.6; text-align:center;}
+
+/* course sheet */
+.cstep{
+  display:flex; gap:10px; align-items:flex-start; background:#FFFCF6;
+  border:1.5px solid var(--line); border-radius:14px; padding:10px 11px; margin-bottom:7px;
+  width:100%; text-align:left;
+}
+.cstep .no{
+  flex:0 0 auto; width:22px; height:22px; border-radius:999px; background:#2A211A; color:#fff;
+  display:grid; place-items:center; font-size:11.5px; font-weight:800;
+}
+.cstep .cbody{flex:1 1 auto; min-width:0;}
+.cstep b{font-size:13.5px; font-weight:800; display:block; letter-spacing:-.3px;}
+.cstep span{font-size:11.8px; color:var(--ink2); font-weight:600; display:block; margin-top:1px; line-height:1.45;}
+.cstep .dist{font-size:10.5px; color:var(--ink3); font-weight:800; margin-top:3px; display:block;}
+
+/* toast */
+.toast{
+  position:fixed; left:50%; bottom:calc(20px + var(--safe-b)); transform:translate(-50%,20px);
+  background:rgba(43,32,24,.94); color:#fff; font-size:12.5px; font-weight:700;
+  padding:9px 15px; border-radius:999px; z-index:120; opacity:0; pointer-events:none;
+  transition:.22s; max-width:86vw; text-align:center;
+}
+.toast.on{opacity:1; transform:translate(-50%,0);}
+
+body.locked{overflow:hidden;}
+@media (min-width:640px){
+  .sheet{max-height:78vh;}
+  h1{font-size:19px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="hrow">
+      <div class="hlogo">🍙</div>
+      <div class="hd">
+        <h1>안양중앙시장 맛집 지도</h1>
+        <p class="hsub">김밥·떡볶이·칼국수·곱창·닭강정 + 주차까지</p>
+      </div>
+      <div class="seg" role="tablist" aria-label="보기 전환">
+        <button id="btnMap" class="on" role="tab" aria-selected="true">🗺 지도</button>
+        <button id="btnList" role="tab" aria-selected="false">☰ 리스트</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="chips" id="chips" role="tablist" aria-label="카테고리"></div>
+  <div class="coursebar" id="coursebar" aria-label="추천 코스"></div>
+
+  <div class="main">
+    <div id="map" role="application" aria-label="안양중앙시장 맛집 지도"></div>
+    <button class="locate" id="locate" aria-label="내 위치로 이동">📍</button>
+    <div class="cbanner" id="cbanner" hidden>
+      <div class="t"><b id="cbTitle"></b><span id="cbSub"></span></div>
+      <button class="go" id="cbGo">코스 보기</button>
+    </div>
+
+    <div id="list" hidden></div>
+  </div>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+<sheet>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
+    <div class="grab"><i></i></div>
+    <button class="sh-close" id="shClose" aria-label="닫기">✕</button>
+    <div class="sh-scroll" id="shScroll"></div>
+  </div>
+</sheet>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   안양중앙시장 맛집 데이터
+   모든 좌표는 지도 서비스(카카오맵·구글맵) 실측 좌표,
+   영업시간·가격은 공식/현장 방문 자료를 2026-11-28에 대조한 값.
+   바뀔 수 있는 값은 카드에 "현장 확인" 표기를 함께 남김.
+   ========================================================= */
+const CATS = {
+  all:   { label:'전체',           emoji:'🍽', color:'#3B2E24' },
+  gimbap:{ label:'김밥·만두',      emoji:'🍙', color:'#1E9E6A' },
+  tteok: { label:'떡볶이',         emoji:'🌶', color:'#E2452F' },
+  meal:  { label:'식사·곱창',      emoji:'🍜', color:'#D0801F' },
+  snack: { label:'간식·닭강정',    emoji:'🍗', color:'#9452C4' },
+  park:  { label:'주차',           emoji:'🅿️', color:'#2F6FE0' }
+};
+
+const PLACES = [
+  {
+    id:'somunnan', cat:'gimbap', name:'소문난김밥집', emoji:'🍙',
+    lat:37.397365, lng:126.9204747,
+    addr:'경기 안양시 만안구 냉천로 190-15 1층', jibun:'안양동 676-191',
+    phone:'0507-1326-0244',
+    hours:'화~일 08:00~18:30', hoursNote:'자료에 따라 05:00 오픈으로 적힌 곳도 있음',
+    closed:'월요일',
+    summary:'야채김밥 2,000원부터. 안양 토박이가 줄 서는 가격 그대로의 김밥집.',
+    menu:[['야채김밥','2,000'],['치즈김밥','3,000'],['참치김밥','3,000'],['참치땡초김밥','3,000'],['멸치김밥','3,500'],['멸치땡초김밥','3,500']],
+    tips:[
+      '매주 월요일 정기휴무 — 월요일에 헛걸음하지 않기',
+      '순대곱창골목 입구, 시장 쉼터 맞은편이라 곱창 먹기 전후로 들르기 좋아요',
+      '비아김밥보다 줄이 짧아 급할 때 대안으로 딱',
+      '참치땡초는 청양고추가 두 개 들어가 제법 매콤해요',
+      '안양사랑페이(지역화폐) 가맹점'
+    ]
+  },
+  {
+    id:'bia', cat:'gimbap', name:'비아김밥 (중앙점)', emoji:'🍙',
+    lat:37.39662, lng:126.9198695,
+    addr:'경기 안양시 만안구 냉천로 187 1층', jibun:'안양동 676-251 (본점 기준)',
+    phone:'031-466-4637',
+    hours:'08:30~19:00', hoursNote:'브레이크타임 13:00~14:00 · 재료 소진 시 조기 마감',
+    closed:'화요일 · 매월 첫째 월요일',
+    summary:'중앙시장 김밥 줄의 원조 격. 20년 넘은 단골이 만드는 두툼한 김밥.',
+    menu:[['야채','3,000'],['치즈 · 스팸 · 크래미','3,500'],['참치 · 참땡 · 멸치 · 멸땡','4,000'],['왕계란 · 고추장진미','4,500'],['참치진미 · 치즈진미','5,500']],
+    tips:[
+      '주말·점심엔 15~30분 웨이팅은 기본이에요',
+      '재료가 떨어지면 일찍 닫아요 — 오후 6시 전 방문 추천',
+      '호일에 싸준 뒤 스티커·봉투는 셀프로 챙기면 됩니다',
+      '휴무일 표기가 자료마다 조금씩 달라요(화요일 / 첫째 주 월·화) — 전화 확인이 확실',
+      '같은 집 본점이 장내로119번길 12에 있어요(031-442-4637)'
+    ]
+  },
+  {
+    id:'haetsal', cat:'gimbap', name:'햇살김밥만두', emoji:'🥟',
+    lat:37.3971094, lng:126.919482,
+    addr:'경기 안양시 만안구 냉천로 193 1층', jibun:'안양동',
+    phone:'0507-1458-3950',
+    hours:'07:00~19:00', hoursNote:'브레이크타임 없음',
+    closed:'월요일',
+    summary:'박달시장 만두나라 2호점. 30년 전통 손만두를 주문하면 그 자리에서 쪄 줍니다.',
+    menu:[['햇살김밥','2,500'],['치즈김밥 · 참치김밥','3,500'],['참땡김밥','4,000'],['고기 · 김치만두 (8개)','4,000'],['반반만두 (8개)','4,000'],['고기 · 김치왕만두 (6개)','6,000'],['반반왕만두 (6개)','6,000']],
+    tips:[
+      '아침 7시 오픈 — 등산·나들이 김밥 포장에 가장 좋은 시간',
+      '포장 전문이라 먹을 자리가 없어요 → 시장 쉼터나 삼덕공원에서',
+      '만두는 주문 후 다시 쪄서 10~15분 걸려요. 전화 예약하면 시간 맞춰 준비해 주세요',
+      '고기·김치 반반으로 주문 가능',
+      '시장·공영주차장 이용하면 주차권을 준다고 해요(매장 확인)'
+    ]
+  },
+  {
+    id:'kokkiri', cat:'gimbap', name:'코끼리만두', emoji:'🥟',
+    lat:37.3979075, lng:126.9199757,
+    addr:'경기 안양시 만안구 안양로291번길 34 중앙시장 1층 118호', jibun:'안양동 676-45',
+    phone:'',
+    hours:null, hoursNote:'확인된 영업시간 자료가 없어요 — 현장 확인',
+    closed:null,
+    summary:'시장 안쪽 만두집. 술빵 쪄내는 냄새가 골목 끝까지 퍼지는 곳.',
+    menu:[['왕만두 · 고기만두 · 김치만두','매장 확인'],['술빵 (한 판)','매장 확인']],
+    tips:[
+      '지도 앱에 등록돼 있지 않아 찾기 어려워요 → 대중족발·제일식품(수제어묵) 바로 옆 가게',
+      '만두피가 담백하고 속이 꽉 차 있어요',
+      '시장 한 바퀴 돌고 마지막에 사도 눅눅해지지 않아 포장에 강해요'
+    ]
+  },
+  {
+    id:'kkune', cat:'tteok', name:'뀨네또와', emoji:'🌶',
+    lat:37.3970238, lng:126.9208083,
+    addr:'경기 안양시 만안구 장내로 119 제1층 제5호', jibun:'안양동',
+    phone:'031-464-9485',
+    hours:'11:00~19:00', hoursNote:null,
+    closed:'월요일',
+    summary:'튀김이 진짜 주인공인 분식집. 단맛 적고 칼칼한 국물 밀떡볶이.',
+    menu:[['옛날 밀떡볶이','4,000'],['뀨또 치즈떡볶이','6,000'],['수제튀김 4개 (택4)','5,000'],['찰순대 (내장 포함)','4,500'],['부산어묵 3개','2,500'],['왕고추튀김','1,500'],['대구식 납작만두 추가','2,000'],['1인 세트','8,500'],['2인 세트','13,000'],['"이거드세요" 세트 (2인+납작만두+어묵)','16,000']],
+    tips:[
+      '튀김은 진열대에서 4가지를 직접 골라 담아요 — 야채튀김·김말이·오징어·고구마 추천',
+      '기름이 깨끗해 바삭함이 오래가요. 떡볶이 국물에 찍어 먹는 조합이 핵심',
+      '좌석이 바테이블 몇 자뿐이라 포장이 편해요',
+      '대구식 납작만두는 리뷰에서 호불호가 갈려요',
+      '월요일 정기휴무'
+    ]
+  },
+  {
+    id:'monyeo', cat:'tteok', name:'모녀떡볶이', emoji:'🍢',
+    lat:37.3980436, lng:126.9211005,
+    addr:'경기 안양시 만안구 냉천로 196 (중앙시장 안)', jibun:'안양동 1189-4 · 연동상회 앞',
+    phone:'',
+    hours:'10:00~20:00', hoursNote:'자료 기준',
+    closed:'화요일 · 수요일',
+    summary:'떡꼬치 양념처럼 진득한 쌀떡볶이. 순대 내장이 좋다는 평이 많은 집.',
+    menu:[['떡볶이 (1인분)','4,500'],['순대 (1인분)','4,500'],['김밥 (1줄)','2,500~3,000'],['어묵 (2꼬치)','2,000'],['튀김 (3개)','2,000']],
+    tips:[
+      '카드 결제 안 됩니다 — 현금이나 계좌이체 준비',
+      '화·수요일 정기휴무',
+      '지도 앱 핀이 실제 위치와 어긋나요 → 연동상회 앞, 게이트 1번으로 들어와 안쪽',
+      '어묵 국물은 계속 리필해 주세요',
+      '떡이 커서 1인분도 양이 많아요 — 둘이 떡볶이+순대 나눠 먹기 좋아요'
+    ]
+  },
+  {
+    id:'hongdukkae', cat:'meal', name:'홍두깨손칼국수 1호점', emoji:'🍜',
+    lat:37.3976172, lng:126.9208209,
+    addr:'경기 안양시 만안구 장내로119번길 18', jibun:'안양동 676-249',
+    phone:'031-441-1142',
+    hours:'매일 08:00~19:30', hoursNote:'라스트오더 19:10',
+    closed:'휴무 없음',
+    summary:'홍두깨로 직접 민 면. 멸치육수에 담백한 시장표 손칼국수.',
+    menu:[['손칼국수','6,000'],['칼제비','6,000'],['수제비','6,000'],['잔치국수','4,000'],['만두국','6,000'],['만두 한 접시','6,000'],['칼만두','7,000'],['물냉면 · 비빔냉면','7,000'],['비빔국수','7,000'],['콩국수 (여름)','8,000']],
+    tips:[
+      '칼제비·수제비는 평일 12:00~15:00에만 주문돼요. 주말엔 판매 안 함',
+      '주문 → 결제 → 대기 → 자리 안내 순서로 진행돼요',
+      '회전이 빨라 웨이팅은 10분 내외',
+      '휴무일이 없어 일요일에도 문 열어요'
+    ]
+  },
+  {
+    id:'beoseot', cat:'meal', name:'버섯칼국수', emoji:'🍄',
+    lat:37.3974694, lng:126.9207943,
+    addr:'경기 안양시 만안구 장내로119번길 16', jibun:'안양동 676-122',
+    phone:'031-441-5015',
+    hours:'10:00~20:00', hoursNote:'라스트오더 19:30',
+    closed:'화요일',
+    summary:'표고버섯 듬뿍, 5,500원 한 그릇. 생생정보 가격파괴 코너에 나온 집.',
+    menu:[['버섯칼국수','5,500'],['잔치국수','5,000'],['비빔국수','6,000'],['김치전 · 부추전 · 배추전','4,500'],['콩국수 (여름)','매장 확인']],
+    tips:[
+      '주말 점심엔 30분 웨이팅, 2시가 넘으면 줄이 확 줄어요',
+      '셀프바에 신김치·겉절이·부추무침이 따로 있어요',
+      '물·수저·반찬·접시 모두 셀프',
+      '전 메뉴 포장 가능',
+      '화요일 휴무 — 월요일과 헷갈리지 마세요'
+    ]
+  },
+  {
+    id:'chunha', cat:'meal', name:'춘하추동 (곱창골목)', emoji:'🍲',
+    lat:37.3968028, lng:126.9209414,
+    addr:'경기 안양시 만안구 장내로 119 (순대곱창골목)', jibun:'안양동',
+    phone:'0504-3133-0505',
+    hours:'10:00~23:50', hoursNote:'자료 기준 · 1·2호점이 번갈아 쉬어 연중무휴',
+    closed:'없음 (호점 교대 휴무)',
+    summary:'30년 단일 메뉴 순대곱창. 비율도 맵기도 골라 주는 곱창골목 대표집.',
+    menu:[['순대곱창볶음 (1인)','9,000~'],['볶음밥','2,000']],
+    tips:[
+      '순대:곱창 비율을 지정할 수 있어요 (곱창만·순대만도 가능)',
+      '맵기는 순한맛 / 중간맛 / 매운맛 / 아주매운맛 4단계',
+      '간 추가 서비스, 사이다 1병 서비스',
+      '1호점이 쉬는 날은 2호점이 영업해요 (같은 가족 3개 점)',
+      '온누리상품권 사용 가능, 배달·포장도 됩니다'
+    ]
+  },
+  {
+    id:'jeonju', cat:'meal', name:'전주집', emoji:'🥘',
+    lat:37.3970784, lng:126.9208341,
+    addr:'경기 안양시 만안구 장내로 119 1층 18-1호', jibun:'안양동 676-242',
+    phone:'031-464-8008',
+    hours:'10:00~22:00', hoursNote:null,
+    closed:'월요일',
+    summary:'1994년부터 이어온 노포. 안양 2대 순대곱창으로 불리는 집.',
+    menu:[['양념순대곱창 (2인)','20,000'],['양념순대곱창 (3인)','30,000'],['백순대곱창 (2인)','22,000'],['백순대곱창 (3인)','33,000'],['양삼이 (순대곱창 3인 + 볶음밥)','32,000'],['백삼이 (백순대곱창 3인 + 볶음밥)','35,000'],['볶음밥','2,000']],
+    tips:[
+      '양념이 부담스러우면 백순대곱창 + 특제소스 + 깻잎쌈 조합',
+      '마무리 볶음밥 2,000원은 필수 — 철판에 눌어붙은 밥이 별미',
+      '자리에 앉으면 음료 1병을 서비스로 줘요',
+      '월요일 정기휴무',
+      '포장·배달 가능'
+    ]
+  },
+  {
+    id:'samwoo', cat:'snack', name:'삼우닭강정', emoji:'🍗',
+    lat:37.3969011, lng:126.9199493,
+    addr:'경기 안양시 만안구 냉천로 190', jibun:'안양동 676-238',
+    phone:'031-445-1575',
+    hours:'10:00~20:30', hoursNote:'브레이크타임 13:00~14:00 (주문 불가)',
+    closed:'없음',
+    summary:'한약재 30가지 수제소스 닭강정. 주문받으면 가마솥에서 바로 볶습니다.',
+    menu:[['순살닭강정 소 400g','10,000'],['순살닭강정 중 600g','14,000'],['순살닭강정 대 800g','17,000'],['순살닭강정 특대 1kg','20,000'],['순살후라이드 (소~특대)','10,000~20,000']],
+    tips:[
+      '13:00~14:00는 브레이크타임이라 주문이 안 돼요',
+      '만드는 데 30~60분 걸려요 → 시장 들어가자마자 주문하고 한 바퀴 돌다가 찾기',
+      '순한맛 / 중간맛 / 매운맛 선택, 대 사이즈부터 반반 가능(+1,000원)',
+      '주말엔 40분 이상 대기 각오',
+      'MBC 생방송 오늘저녁·SBS 생방송 투데이·채널A 먹거리X파일에 소개된 집'
+    ]
+  },
+  {
+    id:'rang', cat:'snack', name:'랑도너츠', emoji:'🍩',
+    lat:37.3967992, lng:126.9197364,
+    addr:'경기 안양시 만안구 냉천로 189 1층', jibun:'안양동 (최근 비아김밥 골목으로 이전)',
+    phone:'010-3545-3020',
+    hours:null, hoursNote:'확인된 영업시간 자료가 없어요 — 매장 확인',
+    closed:'월요일',
+    summary:'1,000원 찹쌀꽈배기·도너츠. 갓 튀겨 계속 채워 넣는 시장 간식.',
+    menu:[['찹쌀도너츠','1,000'],['팥도너츠','1,000'],['찹쌀꽈배기','1,000'],['고로케','1,500'],['핫도그','1,500'],['머핀 (초코·치즈)','1,500'],['옥수수스콘','1,500'],['수제초코파이','2,000']],
+    tips:[
+      '매주 월요일 정기휴무',
+      '최근 비아김밥·가성대구가 있는 골목으로 매장을 옮겼어요 — 지도 앱에 옛 위치로 나올 수 있어요',
+      '식어도 쫄깃해서 김밥 포장하고 디저트로 사 가기 좋아요',
+      '1,000원 메뉴 셋이면 3,000원, 골고루 담기 좋은 가격'
+    ]
+  },
+  {
+    id:'shinhwa', cat:'meal', name:'신화수산', emoji:'🐟',
+    lat:37.3975335, lng:126.9196622,
+    addr:'경기 안양시 만안구 냉천로 196 (중앙시장 1층)', jibun:'안양동 676-44',
+    phone:'031-441-9005',
+    hours:'15:00~22:20', hoursNote:'자료 기준 · 오픈 시간이 15:30으로 적힌 곳도 있음',
+    closed:'월요일',
+    summary:'시장 안 노포 횟집. 겨울 방어철엔 줄이 시장 끝까지 늘어섭니다.',
+    menu:[['모듬회','50,000'],['광어 소 / 중','45,000 / 55,000'],['우럭','35,000'],['방어 소 / 중','50,000 / 65,000'],['조개탕 소 / 중 / 대','25,000 / 30,000 / 40,000'],['멍게 · 해삼 · 전복 · 낙지','20,000~'],['멍게+해삼+낙지','50,000']],
+    tips:[
+      '15시 오픈, 월요일 휴무 — 점심엔 문을 닫아요',
+      '겨울 방어철 6시가 넘으면 방어 단품 주문이 어려워요. 광어·숭어 섞어 주문',
+      '포장마차형 야장 좌석, 회에 매운탕 포함',
+      '삼덕공원 쪽 입구로 들어와 직진 3분',
+      '주차비 지원 없음, 임시휴일이 있으니 전화 확인 추천'
+    ]
+  },
+  {
+    id:'park1', cat:'park', name:'안양중앙시장 공영주차장', emoji:'🅿️',
+    lat:37.3971848, lng:126.9185397,
+    addr:'경기 안양시 만안구 냉천로203번길 15', jibun:'안양동 (노외주차장)',
+    phone:'031-389-5326',
+    hours:'유료 운영 10:00~20:00 (월~일)', hoursNote:'안양시 공영주차장 기준',
+    closed:null,
+    summary:'시장 서편, 곱창골목·김밥 골목과 가장 가까운 주차장.',
+    menu:[['최초 15분','무료'],['최초 30분','400'],['1시간까지 (10분당)','200'],['1~2시간 (10분당)','400'],['일 최대','25,000'],['선불 일일권','9,000']],
+    tips:[
+      '전통시장에서 물건을 사고 "전통시장 이용확인증"을 받으면 최초 90분 무료',
+      '3시간 넘게 세울 땐 선불 일일권 9,000원이 이득',
+      '만차면 기다리지 말고 삼덕공원 주차장으로 이동',
+      '경차·저공해차·65세 이상은 요금 50% 감면 대상(현장 확인)'
+    ]
+  },
+  {
+    id:'park2', cat:'park', name:'삼덕공원 공영주차장', emoji:'🅿️',
+    lat:37.3990808, lng:126.9177613,
+    addr:'경기 안양시 만안구 삼덕로 106', jibun:'안양동 782-24',
+    phone:'031-389-5326',
+    hours:'24시간 개방 (유료 10:00~20:00)', hoursNote:'유료 시간 외에는 요금이 붙지 않아요',
+    closed:null,
+    summary:'자리가 많아 주차가 편한 곳. 신호등 하나만 건너면 시장입니다.',
+    menu:[['최초 15분','무료'],['최초 30분','400'],['1시간까지 (10분당)','200'],['1~2시간 (10분당)','400'],['2~3시간 (10분당)','600'],['일 최대','25,000'],['선불 일일권','9,000']],
+    tips:[
+      '전통시장 이용확인증으로 최초 90분 감면 (1회 1장)',
+      '유료 시간(10~20시) 밖에 입차하면 그 시간만 계산돼요',
+      '자리 없으면 대기하지 말고 회차 — 이중주차는 단속',
+      '무인정산기에서 카드·삼성페이 결제 가능',
+      '시장까지 도보 1~2분, 삼덕공원 산책도 같이'
+    ]
+  }
+];
+
+const COURSES = [
+  {
+    id:'c1', emoji:'🍙', title:'김밥+떡볶이 포장 코스', short:'김밥+떡볶이',
+    desc:'셋 다 포장이 편한 집. 시장 쉼터나 삼덕공원에서 먹으면 최고.',
+    stops:[
+      {id:'somunnan', memo:'야채 2,000원·참치땡초 3,000원. 월요일 휴무'},
+      {id:'monyeo', memo:'진득한 쌀떡볶이 4,500원. 현금 필수, 화·수 휴무'},
+      {id:'rang', memo:'찹쌀꽈배기 1,000원 디저트. 월요일 휴무'}
+    ],
+    note:'세 집 모두 문 여는 날은 목·금·토·일이에요. 월요일엔 소문난김밥·랑도너츠가, 화·수엔 모녀떡볶이가 쉬어요.'
+  },
+  {
+    id:'c2', emoji:'🍜', title:'점심 칼국수+닭강정+도넛 코스', short:'칼국수+도넛',
+    desc:'칼국수 먹으러 가는 길에 닭강정부터 주문 걸어 두는 게 핵심.',
+    stops:[
+      {id:'hongdukkae', memo:'손칼국수 6,000원. 휴무 없음, 19:30 마감'},
+      {id:'samwoo', memo:'조리 30~60분 → 칼국수 주문 전에 먼저 주문'},
+      {id:'rang', memo:'닭강정 찾으면서 도너츠 1,000원'}
+    ],
+    note:'화요일엔 버섯칼국수(5,500원)가 쉬니 홍두깨 1호점으로 가세요. 월요일엔 랑도너츠가 쉽니다.'
+  },
+  {
+    id:'c3', emoji:'🐟', title:'저녁 회+곱창 코스', short:'회+곱창',
+    desc:'15시 이후에만 되는 저녁 코스. 회로 시작해 곱창으로 마무리.',
+    stops:[
+      {id:'shinhwa', memo:'방어·광어 모듬회 50,000원. 15시 오픈, 월 휴무'},
+      {id:'jeonju', memo:'백순대곱창 2인 22,000원 + 볶음밥. 22시까지, 월 휴무'}
+    ],
+    note:'두 집 다 월요일 휴무예요. 겨울 방어철엔 신화수산 대기가 길어 17시 전 도착 추천.'
+  }
+];
+
+/* ===================== state ===================== */
+let activeCat = 'all';
+let activeCourse = null;   // course object
+let view = 'map';
+let map, layer, markers = {};
+let selectedId = null;
+
+const $ = (s)=>document.querySelector(s);
+const byId = (id)=>PLACES.find(p=>p.id===id);
+
+/* ===================== helpers ===================== */
+function dist(a,b){
+  const R=6371000, toR=Math.PI/180;
+  const dLat=(b.lat-a.lat)*toR, dLng=(b.lng-a.lng)*toR;
+  const s=Math.sin(dLat/2)**2 + Math.cos(a.lat*toR)*Math.cos(b.lat*toR)*Math.sin(dLng/2)**2;
+  return Math.round(2*R*Math.asin(Math.sqrt(s)));
+}
+function links(p){
+  const n=encodeURIComponent(p.name);
+  return {
+    kakao:`https://map.kakao.com/link/to/${n},${p.lat},${p.lng}`,
+    naver:`https://map.naver.com/p/search/${encodeURIComponent(p.name+' 안양중앙시장')}`,
+    google:`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking&dir_action=navigate`
+  };
+}
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('on');
+  clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove('on'),2200);
+}
+function courseIndexOf(id){
+  if(!activeCourse) return 0;
+  const i=activeCourse.stops.findIndex(s=>s.id===id);
+  return i<0?0:i+1;
+}
+
+/* ===================== chips ===================== */
+function renderChips(){
+  const box=$('#chips'); box.innerHTML='';
+  Object.entries(CATS).forEach(([key,c])=>{
+    const count = key==='all' ? PLACES.length : PLACES.filter(p=>p.cat===key).length;
+    const b=document.createElement('button');
+    b.className='chip'+(activeCat===key?' on':'');
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-selected', activeCat===key?'true':'false');
+    if(activeCat===key) b.style.background=c.color;
+    b.innerHTML=`<span class="e">${c.emoji}</span>${c.label}<span class="n">${count}</span>`;
+    b.onclick=()=>{
+      activeCat = key;
+      if(activeCourse){ activeCourse=null; renderCourses(); $('#cbanner').hidden=true; }
+      renderChips(); renderMarkers(); renderList(); fitVisible();
+    };
+    box.appendChild(b);
+  });
+}
+
+function renderCourses(){
+  const box=$('#coursebar'); box.innerHTML='';
+  COURSES.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='cchip'+(activeCourse && activeCourse.id===c.id?' on':'');
+    b.innerHTML=`<span>${c.emoji}</span>${c.short}`;
+    b.onclick=()=>toggleCourse(c);
+    box.appendChild(b);
+  });
+}
+
+function toggleCourse(c){
+  if(activeCourse && activeCourse.id===c.id){
+    activeCourse=null;
+    $('#cbanner').hidden=true;
+    renderCourses(); renderMarkers(); renderList(); fitVisible();
+    return;
+  }
+  activeCourse=c;
+  activeCat='all';
+  renderChips(); renderCourses(); renderMarkers(); renderList();
+  showCourseBanner();
+  if(view==='map') fitCourse();
+  openCourseSheet(c);
+}
+
+function showCourseBanner(){
+  if(!activeCourse){ $('#cbanner').hidden=true; document.body.classList.remove('course'); return; }
+  $('#cbTitle').textContent=`${activeCourse.emoji} ${activeCourse.title}`;
+  $('#cbSub').textContent=activeCourse.stops.length+'곳 · 탭하면 코스 순서 보기';
+  const show = (view==='map');
+  $('#cbanner').hidden = !show;
+  document.body.classList.toggle('course', show);
+}
+
+/* ===================== map ===================== */
+function pinIcon(p, opts={}){
+  const color = CATS[p.cat].color;
+  const num = opts.num ? `<b class="num">${opts.num}</b>` : '';
+  const cls = 'pin'+(opts.sel?' sel':'')+(opts.dim?' dim':'');
+  return L.divIcon({
+    className:'',
+    html:`<div class="${cls}" style="--c:${color}"><span>${p.emoji}</span>${num}</div>`,
+    iconSize:[34,34], iconAnchor:[17,17], popupAnchor:[0,-18]
+  });
+}
+
+function buildMap(){
+  map = L.map('map', {
+    zoomControl:false, attributionControl:false,
+    minZoom:14, maxZoom:19, zoomSnap:0.5, tap:true
+  }).setView([37.3975,126.9203], 17);
+
+  L.control.attribution({position:'bottomleft', prefix:false}).addTo(map);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom:19,
+    attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  L.control.zoom({position:'topright'}).addTo(map);
+  layer = L.layerGroup().addTo(map);
+
+  PLACES.forEach(p=>{
+    const m=L.marker([p.lat,p.lng], {icon:pinIcon(p), keyboard:true, title:p.name, riseOnHover:true});
+    m.on('click', ()=>openPlace(p.id, true));
+    markers[p.id]=m;
+  });
+  renderMarkers();
+  setTimeout(()=>map.invalidateSize(), 120);
+}
+
+function visibleSet(){
+  if(activeCourse) return new Set(activeCourse.stops.map(s=>s.id));
+  if(activeCat==='all') return new Set(PLACES.map(p=>p.id));
+  return new Set(PLACES.filter(p=>p.cat===activeCat).map(p=>p.id));
+}
+
+function renderMarkers(){
+  if(!map) return;
+  layer.clearLayers();
+  const vis=visibleSet();
+  PLACES.forEach(p=>{
+    if(!vis.has(p.id)) return;
+    const m=markers[p.id];
+    const num = activeCourse ? courseIndexOf(p.id) : 0;
+    const dim = activeCourse && num===0;
+    m.setIcon(pinIcon(p,{num:num||null, dim, sel:selectedId===p.id}));
+    m.addTo(layer);
+  });
+}
+
+function fitVisible(){
+  if(!map) return;
+  const vis=[...visibleSet()].map(byId).filter(Boolean);
+  if(!vis.length) return;
+  if(vis.length===1){ map.setView([vis[0].lat,vis[0].lng], 18, {animate:true}); return; }
+  const b=L.latLngBounds(vis.map(p=>[p.lat,p.lng]));
+  map.fitBounds(b, {paddingTopLeft:[30,20], paddingBottomRight:[30,60], maxZoom:18, animate:true});
+}
+function fitCourse(){ fitVisible(); }
+
+/* ===================== list ===================== */
+function itemHTML(p){
+  const num = activeCourse ? courseIndexOf(p.id) : 0;
+  const badges=[];
+  if(p.closed && p.closed!=='없음') badges.push(`<span class="tag warn">휴무 ${p.closed.replace('요일','')}</span>`);
+  if(p.hours) badges.push(`<span class="tag">${p.hours}</span>`);
+  else badges.push(`<span class="tag">시간 미확인</span>`);
+  if(p.cat==='park') badges.push(`<span class="tag open">시장 90분 무료</span>`);
+  return `<button class="item" data-id="${p.id}">
+    <div class="ico" style="--c:${CATS[p.cat].color}">${p.emoji}</div>
+    <div class="body">
+      <h3>${p.name}${num?`<span class="num">${num}</span>`:''}</h3>
+      <p>${p.summary}</p>
+      <div class="meta">${badges.join('')}</div>
+    </div>
+  </button>`;
+}
+
+function renderList(){
+  const box=$('#list');
+  const vis=[...visibleSet()].map(byId).filter(Boolean);
+  const order = ['gimbap','tteok','meal','snack','park'];
+  let html='<div class="lwrap">';
+  if(activeCourse){
+    html+=`<div class="lhead"><span class="le">${activeCourse.emoji}</span><h2>${activeCourse.title}</h2><span class="lc">${activeCourse.stops.length}곳</span></div>`;
+    html+=`<p style="margin:0 2px 10px;font-size:12px;color:var(--ink2);font-weight:600;line-height:1.55">${activeCourse.desc}</p>`;
+    html+= activeCourse.stops.map((s,i)=>{
+      const p=byId(s.id);
+      const prev = i>0 ? byId(activeCourse.stops[i-1].id) : null;
+      const road = prev ? ` · 직선 ${dist(prev,p)}m` : '';
+      return `<button class="cstep" data-id="${p.id}">
+        <div class="no">${i+1}</div>
+        <div class="cbody"><b>${p.name}</b><span>${s.memo}</span><span class="dist">${CATS[p.cat].emoji} ${CATS[p.cat].label}${road}</span></div>
+      </button>`;
+    }).join('');
+    html+=`<p class="note">${activeCourse.note}</p>`;
+  } else if(activeCat!=='all'){
+    const c=CATS[activeCat];
+    html+=`<div class="lhead"><span class="le">${c.emoji}</span><h2>${c.label}</h2><span class="lc">${vis.length}곳</span></div>`;
+    html+= vis.map(itemHTML).join('');
+  } else {
+    html+=`<p style="margin:6px 2px 2px;font-size:12px;color:var(--ink2);font-weight:600;line-height:1.55">안양역 1번 출구에서 도보 10분. 시장 골목 안에 다 모여 있어요. 핀이나 카드를 누르면 영업시간·가격·팁이 나옵니다.</p>`;
+    order.forEach(k=>{
+      const arr=vis.filter(p=>p.cat===k);
+      if(!arr.length) return;
+      html+=`<div class="lhead"><span class="le">${CATS[k].emoji}</span><h2>${CATS[k].label}</h2><span class="lc">${arr.length}곳</span></div>`;
+      html+= arr.map(itemHTML).join('');
+    });
+  }
+  html+=`<p class="note">2026년 11월 28일 기준, 카카오맵·구글맵·안양시청 공고와 방문 후기를 대조해 정리했어요.<br>가격과 영업시간은 바뀔 수 있으니 방문 전 확인을 권해요.</p>`;
+  html+='</div>';
+  box.innerHTML=html;
+  box.querySelectorAll('[data-id]').forEach(el=>{
+    el.onclick=()=>openPlace(el.getAttribute('data-id'), view==='map');
+  });
+}
+
+/* ===================== sheet ===================== */
+let sheetOpen=false;
+function openSheet(html){
+  $('#shScroll').innerHTML=html;
+  $('#sheet').classList.add('on');
+  $('#backdrop').classList.add('on');
+  document.body.classList.add('locked');
+  sheetOpen=true;
+  $('#shScroll').scrollTop=0;
+  bindSheetButtons();
+}
+function closeSheet(){
+  $('#sheet').classList.remove('on');
+  $('#backdrop').classList.remove('on');
+  document.body.classList.remove('locked');
+  sheetOpen=false;
+  selectedId=null;
+  if(map) renderMarkers();
+}
+function bindSheetButtons(){
+  const st=$('#sheetStop');
+  if(st) st.onclick=()=>{ closeSheet(); if(activeCourse) openCourseSheet(activeCourse); };
+  const mapBtn=$('#sheetMap');
+  if(mapBtn) mapBtn.onclick=()=>{ closeSheet(); setView('map'); };
+}
+
+function openPlace(id, fromMap){
+  const p=byId(id); if(!p) return;
+  selectedId=id;
+  if(map){
+    renderMarkers();
+    if(view==='map'){
+      const z=Math.max(map.getZoom(),17);
+      map.setView([p.lat,p.lng], z, {animate:true});
+      setTimeout(()=>{
+        const h=$('#sheet').getBoundingClientRect().height||300;
+        map.panBy([0, -Math.min(140, h*0.42)], {animate:true});
+      }, 280);
+    }
+  }
+  const L2=links(p);
+  const closedTxt = p.closed
+    ? (p.closed==='없음'||p.closed.startsWith('없음')
+        ? `<span class="pill open">휴무 없음</span>`
+        : `<span class="pill closed">정기휴무 ${p.closed}</span>`)
+    : `<span class="pill unk">휴무일 미확인</span>`;
+  const hoursTxt = p.hours
+    ? `<b>${p.hours}</b>${p.hoursNote?`<span class="sub">${p.hoursNote}</span>`:''}`
+    : `<span class="pill unk">영업시간 미확인</span>${p.hoursNote?`<span class="sub">${p.hoursNote}</span>`:''}`;
+
+  const menuHTML = p.menu.map(([n,v])=>`<li><span>${n}</span><b>${v==='매장 확인'||v==='무료'?v:(/^[\d,]+$/.test(v)?v+'원':v)}</b></li>`).join('');
+  const num = activeCourse?courseIndexOf(id):0;
+
+  openSheet(`
+    <div class="sh-head">
+      <div class="sh-ico" style="--c:${CATS[p.cat].color}">${p.emoji}</div>
+      <div class="sh-title">
+        <h2 id="shTitle">${p.name}${num?` <span style="font-size:12px;background:#2A211A;color:#fff;border-radius:999px;padding:1px 7px;vertical-align:2px">코스 ${num}</span>`:''}</h2>
+        <p class="sum">${p.summary}</p>
+      </div>
+    </div>
+    <div class="sh-body">
+      <div class="sect">
+        <div class="kv"><div class="k">주소</div><div class="v">${p.addr}${p.jibun?`<span class="sub">지번 ${p.jibun}</span>`:''}</div></div>
+        <div class="kv"><div class="k">영업</div><div class="v"><div class="hoursline">${hoursTxt}</div></div></div>
+        <div class="kv"><div class="k">휴무</div><div class="v"><div class="hoursline">${closedTxt}</div></div></div>
+        ${p.phone?`<div class="kv"><div class="k">전화</div><div class="v"><a href="tel:${p.phone.replace(/[^0-9+]/g,'')}" style="font-weight:800;color:var(--brand-d)">${p.phone}</a></div></div>`:''}
+      </div>
+
+      <div class="sect">
+        <h4>${p.cat==='park'?'요금':'대표 메뉴·가격'}</h4>
+        <ul class="menu">${menuHTML}</ul>
+      </div>
+
+      <div class="sect">
+        <h4>이용 팁</h4>
+        <ul class="tips">${p.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+      </div>
+
+      <div class="acts">
+        <a class="kakao" href="${L2.kakao}" target="_blank" rel="noopener"><span class="ai">💬</span>카카오맵<br>길찾기</a>
+        <a class="naver" href="${L2.naver}" target="_blank" rel="noopener"><span class="ai">🟢</span>네이버지도<br>찾기</a>
+        <a class="google" href="${L2.google}" target="_blank" rel="noopener"><span class="ai">📍</span>구글맵<br>도보길찾기</a>
+      </div>
+      ${p.phone?`<div class="callrow"><a href="tel:${p.phone.replace(/[^0-9+]/g,'')}">📞 전화 걸기</a></div>`:''}
+      ${activeCourse?`<div class="callrow"><a id="sheetStop">↩ ${activeCourse.short} 코스로 돌아가기</a></div>`:''}
+      <p class="stamp">2026. 11. 28. 확인 · 좌표는 지도 서비스 실측값<br>영업시간·가격은 바뀔 수 있어요</p>
+    </div>
+  `);
+}
+
+function openCourseSheet(c){
+  const html = `
+    <div class="sh-head">
+      <div class="sh-ico" style="--c:#3B2E24">${c.emoji}</div>
+      <div class="sh-title">
+        <h2 id="shTitle">${c.title}</h2>
+        <p class="sum">${c.desc}</p>
+      </div>
+    </div>
+    <div class="sh-body">
+      ${c.stops.map((s,i)=>{
+        const p=byId(s.id);
+        const prev=i>0?byId(c.stops[i-1].id):null;
+        return `<button class="cstep" data-cid="${p.id}">
+          <div class="no">${i+1}</div>
+          <div class="cbody"><b>${p.name}</b><span>${s.memo}</span>
+          <span class="dist">${CATS[p.cat].emoji} ${CATS[p.cat].label}${prev?` · 직전에서 직선 ${dist(prev,p)}m`:''}</span></div>
+        </button>`;
+      }).join('')}
+      <ul class="tips" style="margin-top:10px"><li>${c.note}</li><li>지도 위 핀에 1·2·3 순서가 표시돼요. 핀을 누르면 그 집 상세로 바로 갑니다.</li></ul>
+      <div class="callrow"><a id="sheetMap">🗺 지도에서 코스 보기</a></div>
+      <p class="stamp">직선거리는 좌표로 계산한 값이라 실제 골목 길이와 달라요.</p>
+    </div>`;
+  openSheet(html);
+  $('#shScroll').querySelectorAll('[data-cid]').forEach(el=>{
+    el.onclick=()=>openPlace(el.getAttribute('data-cid'), true);
+  });
+}
+
+/* ===================== view switch ===================== */
+function setView(v){
+  view=v;
+  $('#btnMap').classList.toggle('on', v==='map');
+  $('#btnList').classList.toggle('on', v==='list');
+  $('#btnMap').setAttribute('aria-selected', v==='map');
+  $('#btnList').setAttribute('aria-selected', v==='list');
+  $('#map').hidden = v!=='map';
+  $('#list').hidden = v!=='list';
+  $('#locate').hidden = v!=='map';
+  showCourseBanner();
+  if(v==='map'){
+    if(map){ setTimeout(()=>{ map.invalidateSize(); fitVisible(); }, 60); }
+  } else {
+    renderList();
+    $('#list').scrollTop=0;
+  }
+}
+
+/* ===================== geolocation ===================== */
+function locate(){
+  if(!navigator.geolocation){ toast('이 브라우저에서는 위치를 쓸 수 없어요'); return; }
+  const b=$('#locate'); b.classList.add('busy');
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      b.classList.remove('busy');
+      const ll=[pos.coords.latitude,pos.coords.longitude];
+      if(!map) return;
+      L.circleMarker(ll,{radius:7,color:'#fff',weight:3,fillColor:'#2F6FE0',fillOpacity:1}).addTo(map).bindPopup('지금 여기');
+      map.setView(ll, 17, {animate:true});
+      const d=dist({lat:ll[0],lng:ll[1]}, {lat:37.3976,lng:126.9196});
+      toast(`시장까지 직선 약 ${d>=1000?(d/1000).toFixed(1)+'km':d+'m'}`);
+    },
+    err=>{ b.classList.remove('busy'); toast('위치를 가져오지 못했어요 (권한을 확인해 주세요)'); },
+    {enableHighAccuracy:true, timeout:9000, maximumAge:60000}
+  );
+}
+
+/* ===================== boot ===================== */
+function bootMap(){
+  try{
+    buildMap();
+  }catch(e){
+    console.error(e);
+    $('#map').innerHTML='<div class="mapfail">지도를 불러오지 못했어요.<br>리스트 보기로도 모든 맛집을 볼 수 있어요.</div>';
+  }
+}
+
+function ensureLeaflet(cb){
+  if(window.L) return cb();
+  const s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js';
+  s.onload=cb;
+  s.onerror=()=>{
+    $('#map').innerHTML='<div class="mapfail">지도를 불러오지 못했어요.<br>인터넷 연결을 확인하거나 리스트 보기를 이용해 주세요.</div>';
+  };
+  document.head.appendChild(s);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderChips(); renderCourses(); renderList();
+
+  $('#btnMap').onclick=()=>setView('map');
+  $('#btnList').onclick=()=>setView('list');
+  $('#shClose').onclick=closeSheet;
+  $('#backdrop').onclick=closeSheet;
+  $('#locate').onclick=locate;
+  $('#cbGo').onclick=()=>{ if(activeCourse) openCourseSheet(activeCourse); };
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && sheetOpen) closeSheet(); });
+
+  // swipe-down on the grab handle closes the sheet
+  let sy=null;
+  $('#sheet').addEventListener('touchstart', e=>{
+    const g=e.target.closest('.grab');
+    if(g) sy=e.touches[0].clientY;
+  }, {passive:true});
+  $('#sheet').addEventListener('touchmove', e=>{
+    if(sy==null) return;
+    const dy=e.touches[0].clientY-sy;
+    if(dy>70){ sy=null; closeSheet(); }
+  }, {passive:true});
+
+  ensureLeaflet(bootMap);
+
+  // hash deep link (#p=bia)
+  const m=location.hash.match(/p=([a-z0-9]+)/i);
+  if(m && byId(m[1])) setTimeout(()=>openPlace(m[1], false), 500);
+});
+</script>
+</body>
+</html>
