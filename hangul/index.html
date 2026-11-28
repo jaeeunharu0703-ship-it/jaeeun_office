@@ -46,6 +46,13 @@ h1{font-size:17.5px; margin:0; letter-spacing:-.5px; font-weight:800;}
 .mbtn .mi{font-size:14px; display:block; line-height:1;}
 .mbtn.off{background:#fff; border-color:var(--line); color:#B6A395; box-shadow:none;}
 .mbtn.off .mi{opacity:.55; filter:grayscale(1);}
+.mbtn.snd{border-color:#BFE6D6; background:linear-gradient(150deg,#EFFBF5,#FFF9EE); color:#2F9E76;}
+.mbtn.snd .mi{font-size:15px;}
+.mbtn.snd:active{transform:scale(.94);}
+.mbtn.snd.beat{animation:sndBeat 1.8s ease-in-out infinite;}
+@keyframes sndBeat{0%,100%{box-shadow:0 3px 10px rgba(47,158,118,.16);} 50%{box-shadow:0 0 0 7px rgba(124,210,178,.20);}}
+.sndnote{flex:0 0 auto; margin:2px 14px 0; padding:7px 11px; border-radius:14px; background:#EFFBF5; border:1.5px solid #C9EEDD; color:#2C7A5E; font-size:11px; font-weight:800; line-height:1.42; text-align:center;}
+.sndnote b{color:#1F6650;}
 .tabs{display:flex; gap:6px; padding:8px 12px 2px; overflow-x:auto; flex:0 0 auto; scrollbar-width:none;}.tabs::-webkit-scrollbar{display:none;}
 .tab{flex:0 0 auto; border:1.5px solid var(--line); background:#fff; color:var(--ink2); border-radius:999px; padding:7px 13px; font-size:13px; font-weight:800; transition:.15s;}
 .tab.on{background:var(--pink); border-color:var(--pink); color:#fff; box-shadow:0 4px 12px rgba(255,127,163,.32);}
@@ -198,11 +205,28 @@ h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .petbubble{position:relative; margin:0 auto 6px; width:fit-content; max-width:94%; background:#fff; border:2px solid #FFDDE9; color:#D9567C; font-size:12.5px; font-weight:800; padding:8px 13px; border-radius:16px; text-align:center; box-shadow:var(--shadow-s); transition:transform .15s;}
 .petbubble:after{content:''; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%) rotate(45deg); width:12px; height:12px; background:#fff; border-right:2px solid #FFDDE9; border-bottom:2px solid #FFDDE9;}
 .petbubble.pop{animation:pop .35s cubic-bezier(.2,1.5,.4,1);}
-.petstage{position:relative; display:flex; justify-content:center; padding:2px 0 0;}
-.petstage img{width:min(60vw,240px); max-height:34vh; object-fit:contain; border-radius:26px; background:#FFF6EC; transition:transform .2s;}
-.petstage img.eating{animation:munch .34s ease-in-out 4;}
+.petstage{position:relative; height:clamp(206px,36vh,318px); margin:2px 0 0; border-radius:24px; overflow:hidden; touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; cursor:grab;}
+.petstage.grabbing{cursor:grabbing;}
+.petstage:after{content:''; position:absolute; left:13%; right:13%; bottom:12px; height:15px; border-radius:50%; background:radial-gradient(ellipse at center, rgba(226,150,110,.20), rgba(226,150,110,0) 72%); pointer-events:none;}
+.petwrap{position:absolute; left:50%; top:50%; width:0; height:0; transition:transform .2s cubic-bezier(.2,.9,.3,1); will-change:transform;}
+.petwrap.drag{transition:none;}
+.petflip{position:absolute; left:0; top:0; transform:translate(-50%,-50%) scaleX(1); transition:transform .16s ease-out;}
+.petflip.flip{transform:translate(-50%,-50%) scaleX(-1);}
+#petImg{display:block; width:min(52vw,206px); max-height:min(30vh,218px); object-fit:contain; border-radius:26px; background:#FFF6EC; box-shadow:0 10px 22px rgba(180,120,80,.16); pointer-events:auto; touch-action:none; -webkit-user-drag:none; -webkit-user-select:none; user-select:none;}
+#petImg.eating{animation:munch .34s ease-in-out 4;}
+#petImg.happy{animation:petHappy .6s cubic-bezier(.2,1.4,.4,1);}
+#petImg.walk{animation:petBob .34s ease-in-out infinite;}
+#petImg.land{animation:petLand .44s ease-out;}
 @keyframes munch{0%,100%{transform:scale(1) rotate(0);} 30%{transform:scale(1.05) rotate(-2.5deg);} 65%{transform:scale(.98) rotate(2deg);}}
-.bonefly{position:absolute; left:50%; top:8%; font-size:26px; opacity:0; pointer-events:none;}
+@keyframes petHappy{0%{transform:scale(1) rotate(0);} 32%{transform:scale(1.10) rotate(-4deg);} 66%{transform:scale(.97) rotate(3.5deg);} 100%{transform:scale(1) rotate(0);}}
+@keyframes petBob{0%,100%{transform:translateY(0) rotate(0);} 50%{transform:translateY(-7px) rotate(-2.6deg);}}
+@keyframes petLand{0%{transform:translateY(-9px) scale(1.05,.93);} 55%{transform:translateY(2px) scale(.95,1.06);} 100%{transform:translateY(0) scale(1);}}
+.petfx{position:absolute; inset:0; pointer-events:none; overflow:hidden;}
+.petfx i{position:absolute; font-style:normal; font-size:20px; line-height:1; animation:petRise 1.15s ease-out forwards; will-change:transform,opacity;}
+@keyframes petRise{0%{opacity:0; transform:translate(-50%,0) scale(.45);} 22%{opacity:1; transform:translate(-50%,-14px) scale(1.12);} 100%{opacity:0; transform:translate(-50%,-74px) scale(.85);}}
+.pethowto{margin-top:8px; text-align:center; font-size:11.5px; font-weight:800; color:#9A7A8B;}
+.pethowto b{color:var(--pink-d);}
+.bonefly{position:absolute; left:50%; top:12%; font-size:26px; opacity:0; pointer-events:none;}
 .bonefly.go{animation:boneTo 1.1s ease-in forwards;}
 @keyframes boneTo{0%{opacity:1; transform:translate(-50%,-10px) scale(1.1) rotate(-20deg);} 60%{opacity:1; transform:translate(-50%,46%) scale(1) rotate(15deg);} 100%{opacity:0; transform:translate(-50%,62%) scale(.5) rotate(30deg);}}
 .petname{margin-top:8px; text-align:center; font-size:20px; font-weight:900; letter-spacing:-.5px;}
@@ -224,7 +248,7 @@ h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 
 @media (max-width:430px){ h1{font-size:15px;} header.top{gap:6px; padding-left:12px; padding-right:12px;} .stars{font-size:12px; padding:4px 8px; gap:3px;} .sub{font-size:10.5px;} }
 @media (max-height:560px){ .tools button{font-size:11.5px; padding:8px 2px;} .card .g{font-size:28px;} }
-@media (max-width:430px){ .mbtn .mt{display:none;} .mbtn{padding:7px 8px; border-radius:14px;} header.top{gap:8px;} }
+@media (max-width:430px){ .mbtn .mt{display:none;} .mbtn{padding:7px 8px; border-radius:14px;} header.top{gap:6px;} .stars{font-size:11.5px; padding:4px 8px; gap:3px;} }
 @media (max-width:420px){ .tools{gap:5px; padding:6px 8px 2px;} .tools button{font-size:11px; padding:9px 2px;} .navrow{padding:6px 8px calc(8px + env(safe-area-inset-bottom));} .wt-title .big{font-size:19px;} }
 </style>
 </head>
@@ -239,11 +263,16 @@ h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
       <h1>윤서의 한글 공부방</h1>
       <p class="sub">칠뜩이와 함께, 한 획씩!</p>
     </div>
+    <button class="mbtn snd" id="btnSnd" aria-label="소리 테스트" title="소리 테스트">
+      <span class="mi">🔊</span><span class="mt">소리</span>
+    </button>
     <button class="mbtn" id="btnMusic" aria-pressed="true" aria-label="배경음악 켜기·끄기" title="배경음악">
       <span class="mi">🎵</span><span class="mt">배경음</span>
     </button>
     <div class="stars" title="모은 별과 뼈다귀">⭐ <b id="starTotal">0</b><span class="sep"></span>🦴 <b class="bn" id="boneTotal">0</b></div>
   </header>
+
+  <div class="sndnote" id="sndNote" hidden>🔇 <b>소리가 안 들리면</b> 볼륨 버튼으로 크게 · 제어센터의 무음 해제 · 블루투스(에어팟) 연결 확인</div>
 
   <div class="summary" id="summary">
     <span class="chip">📅 오늘 <b id="sumToday">0</b>글자</span>
@@ -328,10 +357,12 @@ h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
       <div class="scroll">
         <div class="petcard">
           <div class="petbubble" id="petBubble">안녕! 나는 칠뜩이야 🐾</div>
-          <div class="petstage">
-            <img id="petImg" src="img/childeuk.jpg" alt="칠뜩이">
+          <div class="petstage" id="petStage">
+            <div class="petwrap" id="petWrap"><div class="petflip" id="petFlip"><img id="petImg" src="img/childeuk.jpg" alt="칠뜩이" draggable="false"></div></div>
+            <div class="petfx" id="petFx" aria-hidden="true"></div>
             <span class="bonefly" id="boneFly">🦴</span>
           </div>
+          <div class="pethowto">👆 칠뜩이를 <b>문질러 쓰다듬으면</b> 좋아하고, <b>끌면</b> 손가락 따라 걸어와요</div>
           <div class="petname">칠뜩이 <span class="lv" id="petLv">Lv.1</span></div>
           <div class="petmood" id="petMood">아직 배가 고픈가 봐요</div>
           <div class="bars">
@@ -340,13 +371,14 @@ h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
             <div class="bar"><span class="bk">💞 친밀도</span><div class="track"><i class="bond" id="petBondBar"></i></div><b id="petBondN">Lv.1</b></div>
           </div>
           <button class="feedbtn" id="btnFeed">🦴 뼈다귀 주기</button>
-          <div class="pethint">가진 뼈다귀 <b id="petBones">0</b>개 · 오늘 먹은 뼈다귀 <b id="petTodayFed">0</b>개</div>
+          <div class="pethint">가진 뼈다귀 <b id="petBones">0</b>개 · 오늘 먹은 뼈다귀 <b id="petTodayFed">0</b>개 · 오늘 쓰다듬기 <b id="petPets">0</b>번</div>
         </div>
         <div class="sec-title">🧸 칠뜩이와 친해지는 법</div>
         <div class="tipbox">
           글자나 단어를 하나 완성할 때마다 🦴 뼈다귀가 <b>1개</b>씩 쌓여요.<br>
           받아쓰기 10문제를 다 쓰면 <b>보너스 🦴 3개</b>!<br>
-          뼈다귀를 주면 칠뜩이가 배부르고 기분이 좋아져요.
+          뼈다귀를 주면 칠뜩이가 배부르고 기분이 좋아져요.<br>
+          손가락으로 <b>쓰다듬거나 끌어 주면</b> 기분(💗)이 올라가요.
         </div>
       </div>
     </section>
@@ -876,7 +908,7 @@ function tabItems(id){
    5. 상태 · 저장
    ===================================================================== */
 var KEY = 'yoonseo-hangul-v1';
-var data = { total:0, done:{}, days:{}, bones:0, dictRuns:0, pet:{ fed:0, full:30, happy:50, day:'', dayFed:0 } };
+var data = { total:0, done:{}, days:{}, bones:0, dictRuns:0, pet:{ fed:0, full:30, happy:50, day:'', dayFed:0, pets:0, dayPets:0 } };
 try {
   var raw = localStorage.getItem(KEY);
   if(raw){
@@ -887,7 +919,7 @@ try {
     data.bones = o.bones || 0;
     data.dictRuns = o.dictRuns || 0;
     if(o.pet){
-      data.pet = { fed:o.pet.fed||0, full:(o.pet.full==null?30:o.pet.full), happy:(o.pet.happy==null?50:o.pet.happy), day:o.pet.day||'', dayFed:o.pet.dayFed||0 };
+      data.pet = { fed:o.pet.fed||0, full:(o.pet.full==null?30:o.pet.full), happy:(o.pet.happy==null?50:o.pet.happy), day:o.pet.day||'', dayFed:o.pet.dayFed||0, pets:o.pet.pets||0, dayPets:o.pet.dayPets||0 };
     }
   }
 } catch(e){}
@@ -898,8 +930,10 @@ function pad2(n){ return (n < 10 ? '0' : '') + n; }
 function ymd(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
 function todayKey(){ return ymd(new Date()); }
 function petToday(){
-  if(!data.pet) data.pet = { fed:0, full:30, happy:50, day:'', dayFed:0 };
-  if(data.pet.day !== todayKey()){ data.pet.day = todayKey(); data.pet.dayFed = 0; }
+  if(!data.pet) data.pet = { fed:0, full:30, happy:50, day:'', dayFed:0, pets:0, dayPets:0 };
+  if(data.pet.pets == null) data.pet.pets = 0;
+  if(data.pet.dayPets == null) data.pet.dayPets = 0;
+  if(data.pet.day !== todayKey()){ data.pet.day = todayKey(); data.pet.dayFed = 0; data.pet.dayPets = 0; }
   return data.pet;
 }
 function dayRec(key){
@@ -984,7 +1018,7 @@ function gotoTab(id){
   if(dict.on && id !== 'dict') dict.on = false;
   renderTabs();
   if(id === 'star'){ showView('star'); renderSticker(); return; }
-  if(id === 'pet'){ showView('pet'); renderPet(); return; }
+  if(id === 'pet'){ showView('pet'); resetPetPose(); renderPet(); return; }
   if(id === 'dict'){ showView('dict'); renderDictHome(); return; }
   curList = tabItems(id);
   if(!same) themeSel = 'all';
@@ -1043,7 +1077,7 @@ function renderCards(){
       '<div class="g">' + it.ch + '</div>' +
       '<div class="e">' + (it.emoji || '') + '</div>' +
       '<div class="n">' + (it.name || it.say || '&nbsp;') + '</div>';
-    el.addEventListener('click', function(){ sfx('tap'); openLetter(idx); });
+    el.addEventListener('click', function(){ sfx('tap'); openLetter(idx, true); });
     cardGrid.appendChild(el);
   });
   if(!list.length){
@@ -1169,7 +1203,7 @@ function buildWord(word){
   });
   return { word: word, s: s, strokes: strokes, regions: regions };
 }
-function openLetter(i){
+function openLetter(i, fromTap){
   if(i < 0 || i >= curList.length) return;
   dict.on = false;
   setDictChrome(false);
@@ -1190,7 +1224,9 @@ function openLetter(i){
   updateProgress();
   requestAnimationFrame(function(){ fitCanvas(); });
   clearTimeout(sayTimer);
-  sayTimer = setTimeout(function(){ speak(it.say || letterSpeech()); }, 420);
+  var line = it.say || letterSpeech();
+  if(fromTap){ speak(line); }          /* 터치 핸들러 안에서 바로 → iOS도 소리 남 */
+  else { sayTimer = setTimeout(function(){ speak(line); }, 420); }
 }
 function currentItem(){
   if(dict.on) return dict.list[dict.i] || null;
@@ -1593,10 +1629,13 @@ function confetti(){
 /* =====================================================================
    12. 소리
    ===================================================================== */
+var AC_CTOR = window.AudioContext || window.webkitAudioContext || null;
 var ac = null;
+/* iOS/iPadOS는 AudioContext를 'suspended'로 만들고 사용자 제스처 안에서만 resume을 허용한다.
+   여기서는 만들기만 하고, 깨우는 일은 unlockAudio()가 제스처 핸들러 안에서 맡는다. */
 function audio(){
-  if(!ac){
-    try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ ac = null; }
+  if(!ac && AC_CTOR){
+    try { ac = new AC_CTOR(); } catch(e){ ac = null; }
   }
   if(ac && ac.state !== 'running'){
     try {
@@ -1627,6 +1666,9 @@ function sfx(kind){
   else if(kind === 'win'){ [523,659,784,1046].forEach(function(f,i){ tone(f, 0.28, i*0.09, 0.12, 'sine'); }); }
   else if(kind === 'munch'){ tone(190, 0.07, 0, 0.11, 'square'); tone(150, 0.08, 0.07, 0.10, 'square'); tone(330, 0.06, 0.15, 0.06, 'triangle'); }
   else if(kind === 'tap'){ tone(520, 0.06, 0, 0.05, 'sine'); }
+  else if(kind === 'pet'){ tone(880, 0.08, 0, 0.055, 'sine'); tone(1174, 0.09, 0.06, 0.045, 'sine'); tone(1568, 0.10, 0.12, 0.03, 'sine'); }
+  else if(kind === 'land'){ tone(196, 0.08, 0, 0.09, 'triangle'); tone(294, 0.11, 0.06, 0.055, 'triangle'); }
+  else if(kind === 'hello'){ [659,784,988,1318].forEach(function(f,i){ tone(f, 0.30, i*0.12, 0.11, 'triangle'); }); }
 }
 
 /* ---------------------------------------------------------------
@@ -1917,40 +1959,73 @@ if(btnMusic){
     sfx('tap');
   });
 }
-/* iOS/iPadOS : 사용자 제스처에서 오디오 세션을 확실히 연다 */
-var audioUnlocked = false, lastUnlock = 0;
+/* ---------------------------------------------------------------
+   iOS/iPadOS 오디오 잠금 풀기
+   · 첫 제스처 '안에서' resume() + 1샘플 무음 버퍼 재생
+   · once 아님 : 화면이 잠겼다 돌아오거나, 다른 앱이 세션을 가져가면
+     다시 suspended 가 되므로 매 제스처마다 확인해야 한다
+   --------------------------------------------------------------- */
+var audioUnlocked = false, lastUnlock = 0, gestureCount = 0;
+function silentOneShot(a){
+  try {
+    var b = a.createBuffer(1, 1, 22050);
+    var s = a.createBufferSource();
+    s.buffer = b;
+    s.connect(a.destination);
+    if(s.start) s.start(0); else if(s.noteOn) s.noteOn(0);
+  } catch(e){}
+}
 function unlockAudio(force){
   var a = audio();
-  if(!a) return;
-  var now = Date.now();
-  /* 무음 1샘플 재생 : iOS Safari 오디오 세션 활성화의 표준 방법 */
-  if(force || now - lastUnlock > 300){
-    lastUnlock = now;
+  if(!a) return false;
+  gestureCount++;
+  if(force || Date.now() - lastUnlock > 250){
+    lastUnlock = Date.now();
+    silentOneShot(a);
+  }
+  if(a.state === 'running'){
+    audioUnlocked = true;
+    markSoundOK();
+  } else {
     try {
-      var b = a.createBuffer(1, 1, 22050);
-      var s = a.createBufferSource();
-      s.buffer = b;
-      s.connect(a.destination);
-      s.start(0);
+      var p = a.resume();
+      if(p && p.then){
+        p.then(function(){
+          if(a.state === 'running'){
+            audioUnlocked = true;
+            if(bgm.on && !bgm.timer) bgmPlay();
+            markSoundOK();
+          }
+        });
+        if(p.catch) p.catch(function(){});
+      }
     } catch(e){}
   }
-  if(a.state === 'running') audioUnlocked = true;
+  speakUnlock();          /* 목소리도 첫 제스처 안에서 같이 연다 */
   if(bgm.on) bgmPlay();
+  /* 자동 안내는 첫 터치 뒤 한 번만 진단 (잔소리 방지) */
+  if(gestureCount === 1){
+    setTimeout(function(){ if(!audioUnlocked) showSoundNote(0); }, 1100);
+  }
+  return audioUnlocked;
 }
-document.addEventListener('pointerdown', function(){ unlockAudio(); }, { capture:true, passive:true });
-document.addEventListener('touchstart', function(){ unlockAudio(); }, { capture:true, passive:true });
-document.addEventListener('touchend', function(){ unlockAudio(); }, { capture:true, passive:true });
-document.addEventListener('click', function(){ unlockAudio(); }, { capture:true, passive:true });
+['pointerdown', 'touchstart', 'touchend', 'click'].forEach(function(type){
+  document.addEventListener(type, function(){ unlockAudio(); }, { capture:true, passive:true });
+});
 document.addEventListener('keydown', function(){ unlockAudio(); });
 document.addEventListener('visibilitychange', function(){
   if(document.hidden) return;
   if(bgm.on){ audio(); bgmPlay(); }
 });
+window.addEventListener('pageshow', function(){ if(bgm.on){ audio(); bgmPlay(); } });
 /* speechSynthesis·화면 잠김 뒤 iOS 가 오디오를 놓으면 스스로 되살림 */
 setInterval(function(){
   if(!ac) return;
   if(ac.state !== 'running'){
     try { ac.resume(); } catch(e){}
+  } else if(!audioUnlocked){
+    audioUnlocked = true;
+    markSoundOK();
   } else if(bgm.on && !bgm.timer){
     bgmPlay();
   }
@@ -1958,31 +2033,121 @@ setInterval(function(){
 window.addEventListener('blur', penStop);
 bgmPaint();
 
-function speak(text){
-  try {
-    if(!('speechSynthesis' in window) || !text) return;
-    window.speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ko-KR';
-    u.rate = 0.82;
-    u.pitch = 1.18;
-    var vs = window.speechSynthesis.getVoices() || [];
-    for(var i=0;i<vs.length;i++){
-      if((vs[i].lang || '').toLowerCase().indexOf('ko') === 0){ u.voice = vs[i]; break; }
+/* ---------------------------------------------------------------
+   목소리(TTS)
+   iOS/iPadOS 실실 걸림돌 3가지
+   ① 사용자 터치 밖에서 부른 speak()는 조용히 무시됨 → 첫 터치에서 언락
+   ② cancel() 직후 같은 틱에 speak()하면 새 문장이 썰힘 → 45ms 뒤로 미룸
+   ③ getVoices()가 아직 비어 있으면 한국어 음성 없이 읽어 침묵 → voiceschanged 로 다시 채움
+   --------------------------------------------------------------- */
+var synth = window.speechSynthesis || null;
+var koVoice = null, speechTried = false, speechTimer = null, unlockUtter = null;
+function pickKoVoice(){
+  if(!synth) return null;
+  var vs = [];
+  try { vs = synth.getVoices() || []; } catch(e){ vs = []; }
+  var best = null;
+  for(var i = 0; i < vs.length; i++){
+    var lang = (vs[i].lang || '').toLowerCase();
+    if(lang.indexOf('ko') === 0){
+      if(!best) best = vs[i];
+      if(/yuna|siri|korean|한국/i.test(vs[i].name || '')){ best = vs[i]; break; }
     }
-    window.speechSynthesis.speak(u);
-    /* iOS는 말하기가 끝난 뒤 오디오 세션을 놓는 경우가 있어 다시 열아 준다 */
-    var restore = function(){
-      setTimeout(function(){
-        if(!ac) return;
-        if(ac.state !== 'running'){ try { ac.resume(); } catch(e){} }
-        if(bgm.on && !bgm.timer) bgmPlay();
-      }, 260);
-    };
-    u.onend = restore;
-    u.onerror = restore;
+  }
+  if(best) koVoice = best;
+  return best;
+}
+if(synth){
+  pickKoVoice();
+  try {
+    if(synth.addEventListener) synth.addEventListener('voiceschanged', pickKoVoice);
+    else synth.onvoiceschanged = pickKoVoice;
   } catch(e){}
 }
+function restoreAudioSession(){
+  setTimeout(function(){
+    if(!ac) return;
+    if(ac.state !== 'running'){ try { ac.resume(); } catch(e){} }
+    if(bgm.on && !bgm.timer) bgmPlay();
+  }, 260);
+}
+function speakUnlock(){
+  if(!synth || speechTried) return;
+  speechTried = true;
+  try {
+    if(!koVoice) pickKoVoice();
+    var u = new SpeechSynthesisUtterance(' ');
+    u.lang = 'ko-KR';
+    u.volume = 0.01;
+    u.rate = 2;
+    if(koVoice) u.voice = koVoice;
+    unlockUtter = u;
+    u.onend = u.onerror = function(){ unlockUtter = null; };
+    synth.speak(u);
+  } catch(e){}
+}
+function speak(text){
+  if(!synth || !text) return;
+  var msg = String(text);
+  var go = function(){
+    try {
+      if(!koVoice) pickKoVoice();
+      var u = new SpeechSynthesisUtterance(msg);
+      u.lang = 'ko-KR';
+      u.rate = 0.82;
+      u.pitch = 1.18;
+      u.volume = 1;
+      if(koVoice) u.voice = koVoice;
+      u.onend = restoreAudioSession;
+      u.onerror = restoreAudioSession;
+      synth.speak(u);
+    } catch(e){}
+  };
+  var busy = false;
+  try { busy = !!(synth.speaking || synth.pending); } catch(e){ busy = false; }
+  clearTimeout(speechTimer);
+  /* 언락용 짧은 발음이 아직 말하는 중이면 끊지 말고 그 뒤에 이어 붙인다 */
+  if(busy && !unlockUtter){
+    try { synth.cancel(); } catch(e){}
+    speechTimer = setTimeout(go, 45);
+  } else {
+    go();
+  }
+}
+/* ---------------------------------------------------------------
+   🔊 소리 테스트 버튼 · 무음 안내
+   아이패드는 볼륨·블루투스·제어센터 무음 때문에 '코드는 맞는데
+   안 들리는' 경우가 많아서, 손으로 바로 확인할 수 있게 둔다.
+   --------------------------------------------------------------- */
+var sndNote = document.getElementById('sndNote');
+var sndNoteTimer = null;
+var btnSnd = document.getElementById('btnSnd');
+function showSoundNote(ms){
+  if(!sndNote) return;
+  sndNote.hidden = false;
+  clearTimeout(sndNoteTimer);
+  if(ms) sndNoteTimer = setTimeout(function(){ sndNote.hidden = true; }, ms);
+}
+function markSoundOK(){
+  if(btnSnd) btnSnd.classList.remove('beat');
+  if(!sndNote || sndNote.hidden) return;
+  clearTimeout(sndNoteTimer);
+  sndNoteTimer = setTimeout(function(){ sndNote.hidden = true; }, 4200);
+}
+function hideSoundNoteSoon(){ markSoundOK(); }
+if(btnSnd){
+  btnSnd.classList.add('beat');
+  btnSnd.addEventListener('click', function(e){
+    e.stopPropagation();
+    unlockAudio(true);
+    speakUnlock();
+    sfx('hello');
+    setTimeout(function(){ sfx('pet'); }, 560);
+    speak('소리가 잘 들리면 성공이에요!');
+    showSoundNote(7000);
+  });
+}
+
 function letterSpeech(){
   if(!curList[curIndex]) return;
   var ch = curList[curIndex].ch;
@@ -2081,6 +2246,7 @@ function renderPet(){
   el = document.getElementById('petBondN'); if(el) el.textContent = 'Lv.' + lv;
   el = document.getElementById('petMood'); if(el) el.textContent = petMoodText(p, lv);
   el = document.getElementById('btnFeed'); if(el) el.disabled = (data.bones || 0) <= 0;
+  el = document.getElementById('petPets'); if(el) el.textContent = p.dayPets || 0;
   paintBones();
 }
 var petEating = false, petTimer = null;
@@ -2122,6 +2288,214 @@ function feedPet(){
   }, 1750);
   renderPet();
 }
+
+/* ---------------------------------------------------------------
+   🐾 칠뜩이 놀이 : 손으로 쓰다듬기 + 끌어서 같이 걷기
+   · petstage/멍멍이에 touch-action:none → 아이패드 스크롤과 안 겹침
+   · pointerdown → pointermove → pointerup (손가락·펜·마우스 공통)
+   · 문지르면(방향이 되돌아오면) 쓰다듬기, 한 방향으로 끌면 따라오기
+   --------------------------------------------------------------- */
+var petStage = document.getElementById('petStage');
+var petWrapEl = document.getElementById('petWrap');
+var petFlipEl = document.getElementById('petFlip');
+var petImgEl = document.getElementById('petImg');
+var petFx = document.getElementById('petFx');
+var petFaceTimer = null, petHappyTimer = null;
+var petPlay = {
+  down:false, id:null, mode:'', rect:null, t0:0,
+  sx:0, sy:0, lx:0, ly:0, x:0, y:0, total:0, rev:0,
+  dirX:0, dirY:0, lastFx:0, lastSfx:0, lastHappy:0, lastSay:0
+};
+var PET_PLAY_LINES = [
+  '기분 좋아요~ 🐾',
+  '아이 좋아! 한 번 더!',
+  '윤서 손이 따뜻해요',
+  '멍멍! 같이 놀아서 신나요',
+  '보들보들~ 더 쓰다듬어 줘!'
+];
+var PET_MARKS = ['💗','💖','✨','🐾','⭐','💕'];
+
+function petPlace(x, y){
+  if(!petStage || !petWrapEl) return;
+  var sw = petStage.clientWidth || 0, sh = petStage.clientHeight || 0;
+  var iw = petImgEl ? (petImgEl.offsetWidth || 0) : 0;
+  var ih = petImgEl ? (petImgEl.offsetHeight || 0) : 0;
+  var mx = Math.max(0, (sw - iw) / 2 - 2);
+  var my = Math.max(0, (sh - ih) / 2 - 2);
+  petPlay.x = Math.max(-mx, Math.min(mx, x));
+  petPlay.y = Math.max(-my, Math.min(my, y));
+  petWrapEl.style.transform = 'translate(' + petPlay.x.toFixed(1) + 'px,' + petPlay.y.toFixed(1) + 'px)';
+}
+function resetPetPose(){
+  petPlay.down = false; petPlay.id = null; petPlay.mode = ''; petPlay.rect = null;
+  petPlay.x = 0; petPlay.y = 0;
+  if(petWrapEl){ petWrapEl.classList.remove('drag'); petWrapEl.style.transform = 'translate(0px,0px)'; }
+  if(petFlipEl) petFlipEl.classList.remove('flip');
+  if(petImgEl) petImgEl.classList.remove('walk', 'land');
+}
+function setPetFace(on){
+  if(!petImgEl) return;
+  clearTimeout(petFaceTimer);
+  if(on){
+    if(petImgEl.getAttribute('src') !== 'img/childeuk-happy.jpg') petImgEl.src = 'img/childeuk-happy.jpg';
+    petImgEl.classList.remove('walk', 'land');
+    petImgEl.classList.add('happy');
+  } else {
+    petFaceTimer = setTimeout(function(){
+      if(petPlay.down) return;
+      petImgEl.classList.remove('happy');
+      if(!petEating && petImgEl.getAttribute('src') !== 'img/childeuk.jpg') petImgEl.src = 'img/childeuk.jpg';
+    }, 60);
+  }
+}
+function petHappyFace(ms){
+  setPetFace(true);
+  clearTimeout(petHappyTimer);
+  petHappyTimer = setTimeout(function(){ setPetFace(false); }, ms || 950);
+}
+function petFxBurst(x, y, n){
+  if(!petFx) return;
+  n = n || 2;
+  for(var i = 0; i < n; i++){
+    var s = document.createElement('i');
+    s.textContent = PET_MARKS[Math.floor(Math.random() * PET_MARKS.length)];
+    s.style.left = (x + (Math.random() * 44 - 22)).toFixed(0) + 'px';
+    s.style.top  = (y + (Math.random() * 18 - 8)).toFixed(0) + 'px';
+    s.style.fontSize = (14 + Math.random() * 12).toFixed(0) + 'px';
+    s.style.animationDelay = (Math.random() * 0.18).toFixed(2) + 's';
+    petFx.appendChild(s);
+    (function(el){ setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 1600); })(s);
+  }
+}
+function petRub(px, py){
+  var now = Date.now();
+  if(now - petPlay.lastFx > 170){ petPlay.lastFx = now; petFxBurst(px, py, 2); }
+  if(now - petPlay.lastSfx > 240){ petPlay.lastSfx = now; sfx('pet'); }
+  setPetFace(true);
+  if(now - petPlay.lastHappy > 380){
+    petPlay.lastHappy = now;
+    var p = petToday();
+    p.happy = Math.min(100, p.happy + 2);
+    p.pets = (p.pets || 0) + 1;
+    p.dayPets = (p.dayPets || 0) + 1;
+    renderPet();
+  }
+  if(now - petPlay.lastSay > 5200){
+    petPlay.lastSay = now;
+    petSay(PET_PLAY_LINES[Math.floor(Math.random() * PET_PLAY_LINES.length)]);
+  }
+}
+function petDown(e){
+  if(!petStage || !petImgEl) return;
+  e.preventDefault();
+  /* 오디오 언락은 document 캐처 단계에서 이미 처리된다 */
+  if(petImgEl.setPointerCapture){ try { petImgEl.setPointerCapture(e.pointerId); } catch(err){} }
+  petPlay.rect = petStage.getBoundingClientRect();
+  var px = e.clientX - petPlay.rect.left, py = e.clientY - petPlay.rect.top;
+  petPlay.down = true; petPlay.id = e.pointerId; petPlay.mode = '';
+  petPlay.total = 0; petPlay.rev = 0; petPlay.dirX = 0; petPlay.dirY = 0;
+  petPlay.t0 = Date.now();
+  petPlay.sx = petPlay.lx = px; petPlay.sy = petPlay.ly = py;
+  if(petWrapEl) petWrapEl.classList.add('drag');
+  petStage.classList.add('grabbing');
+  petFxBurst(px, py, 1);
+  sfx('tap');
+}
+function petMove(e){
+  if(!petPlay.down || !petStage) return;
+  if(petPlay.id !== null && e.pointerId !== petPlay.id) return;
+  if(e.cancelable) e.preventDefault();
+  var r = petPlay.rect || petStage.getBoundingClientRect();
+  var px = e.clientX - r.left, py = e.clientY - r.top;
+  var dx = px - petPlay.lx, dy = py - petPlay.ly;
+  var moved = Math.sqrt(dx * dx + dy * dy);
+  if(moved < 0.5) return;
+  petPlay.total += moved;
+  petPlay.lx = px; petPlay.ly = py;
+
+  var ax = Math.abs(dx), ay = Math.abs(dy);
+  var horiz = ax >= ay;
+  var d = horiz ? dx : dy;
+  if(Math.abs(d) >= 1.5){
+    var prev = horiz ? petPlay.dirX : petPlay.dirY;
+    var sgn = d > 0 ? 1 : -1;
+    if(prev && sgn !== prev) petPlay.rev++;
+    if(horiz) petPlay.dirX = sgn; else petPlay.dirY = sgn;
+  }
+
+  if(!petPlay.mode){
+    if(petPlay.rev >= 1 && petPlay.total > 16) petPlay.mode = 'rub';
+    else if(petPlay.total > 26 && (Date.now() - petPlay.t0) > 110) petPlay.mode = 'drag';
+  }
+
+  if(petPlay.mode === 'drag'){
+    petPlace(petPlay.x + dx, petPlay.y + dy);
+    if(ax > 1.2 && petFlipEl) petFlipEl.classList.toggle('flip', dx > 0);
+    if(petImgEl) petImgEl.classList.add('walk');
+  } else if(petPlay.mode === 'rub'){
+    petRub(px, py);
+  }
+}
+function petUp(e){
+  if(!petPlay.down) return;
+  var mode = petPlay.mode;
+  petPlay.down = false;
+  try {
+    if(petImgEl && petImgEl.releasePointerCapture && petPlay.id !== null && e && e.pointerId === petPlay.id){
+      petImgEl.releasePointerCapture(petPlay.id);
+    }
+  } catch(err){}
+  petPlay.id = null;
+  if(petStage) petStage.classList.remove('grabbing');
+  if(petWrapEl) petWrapEl.classList.remove('drag');
+  if(petImgEl) petImgEl.classList.remove('walk');
+
+  var r = petPlay.rect || (petStage ? petStage.getBoundingClientRect() : { width:0, height:0, left:0, top:0 });
+  var cx = r.width / 2 + petPlay.x;
+  var cy = r.height / 2 + petPlay.y - 12;
+  var p = petToday();
+
+  if(mode === 'drag'){
+    if(petImgEl){
+      petImgEl.classList.remove('land');
+      void petImgEl.offsetWidth;
+      petImgEl.classList.add('land');
+      setTimeout(function(){ if(petImgEl) petImgEl.classList.remove('land'); }, 520);
+    }
+    sfx('land');
+    petFxBurst(cx, cy + 46, 3);
+    petSay('와앙! 같이 걸어서 좋아요 🐾');
+    p.happy = Math.min(100, p.happy + 3);
+    p.pets = (p.pets || 0) + 1;
+    p.dayPets = (p.dayPets || 0) + 1;
+    petHappyFace(1100);
+  } else if(mode === 'rub'){
+    petFxBurst(cx, cy - 18, 4);
+    petHappyFace(1100);
+  } else {
+    petFxBurst(petPlay.lx, petPlay.ly - 4, 3);
+    sfx('pet');
+    p.happy = Math.min(100, p.happy + 1);
+    p.pets = (p.pets || 0) + 1;
+    p.dayPets = (p.dayPets || 0) + 1;
+    if(Math.random() < 0.55) petSay(PET_PLAY_LINES[Math.floor(Math.random() * PET_PLAY_LINES.length)]);
+    petHappyFace(950);
+  }
+  save();
+  renderPet();
+  petPlay.rect = null;
+}
+if(petImgEl){
+  petImgEl.addEventListener('pointerdown', petDown);
+  petImgEl.addEventListener('pointermove', petMove);
+  petImgEl.addEventListener('pointerup', petUp);
+  petImgEl.addEventListener('pointercancel', petUp);
+  petImgEl.addEventListener('lostpointercapture', function(){ if(petPlay.down) petUp(null); });
+  petImgEl.addEventListener('dragstart', function(e){ e.preventDefault(); });
+  petImgEl.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+}
+window.addEventListener('resize', function(){ if(petStage && !viewPet.hidden) petPlace(petPlay.x, petPlay.y); });
+resetPetPose();
 
 /* =====================================================================
    13.6  📝 받아쓰기
@@ -2339,10 +2713,10 @@ document.getElementById('btnGuide').addEventListener('click', function(){
   render();
 });
 btnPrev.addEventListener('click', function(){
-  if(curIndex > 0){ sfx('tap'); openLetter(curIndex - 1); }
+  if(curIndex > 0){ sfx('tap'); openLetter(curIndex - 1, true); }
 });
 btnNext.addEventListener('click', function(){
-  if(curIndex < curList.length - 1){ sfx('tap'); openLetter(curIndex + 1); }
+  if(curIndex < curList.length - 1){ sfx('tap'); openLetter(curIndex + 1, true); }
 });
 document.getElementById('cheerAgain').addEventListener('click', function(){
   clearTimeout(cheerTimer);
@@ -2440,6 +2814,9 @@ if(new URLSearchParams(location.search).has('test')){
       return {
         ctx: ac ? ac.state : 'none',
         unlocked: audioUnlocked,
+        gestures: gestureCount,
+        koVoice: koVoice ? koVoice.name : null,
+        voices: (function(){ try { return (synth ? synth.getVoices() : []).length; } catch(e){ return -1; } })(),
         musicOn: bgm.on,
         musicRunning: !!bgm.timer,
         musicGain: bgm.gain ? +bgm.gain.gain.value.toFixed(4) : -1,
@@ -2458,8 +2835,12 @@ if(new URLSearchParams(location.search).has('test')){
     },
     pet: function(){
       petToday();
-      return { bones:data.bones||0, fed:data.pet.fed, full:data.pet.full, happy:data.pet.happy, dayFed:data.pet.dayFed, level:petLevel(data.pet.fed) };
+      return { bones:data.bones||0, fed:data.pet.fed, full:data.pet.full, happy:data.pet.happy, dayFed:data.pet.dayFed, level:petLevel(data.pet.fed),
+               pets:data.pet.pets||0, dayPets:data.pet.dayPets||0,
+               x:+petPlay.x.toFixed(1), y:+petPlay.y.toFixed(1), mode:petPlay.mode, down:petPlay.down,
+               face:(petImgEl ? petImgEl.getAttribute('src') : ''), flip:(petFlipEl ? petFlipEl.classList.contains('flip') : false) };
     },
+    petPose: function(){ return { x:+petPlay.x.toFixed(1), y:+petPlay.y.toFixed(1), mode:petPlay.mode, down:petPlay.down }; },
     feed: function(){
       var b = document.getElementById('btnFeed');
       if(!b || b.disabled) return 'no-bones';
