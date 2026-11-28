@@ -120,6 +120,13 @@ h1{font-size:18px; margin:0; letter-spacing:-.6px; font-weight:800;}
 .pin.dim{opacity:.26; filter:grayscale(.55);}
 .pin.sel .num{background:var(--brand);}
 .leaflet-marker-icon:focus{outline:none;}
+.pinlabel{
+  background:rgba(255,253,249,.95); border:1px solid #E7D2BA; color:#3B2E24;
+  font-size:10.5px; font-weight:800; padding:1px 5px; border-radius:6px;
+  box-shadow:0 1px 4px rgba(80,50,20,.16); white-space:nowrap; letter-spacing:-.2px;
+}
+.pinlabel::before{display:none;}
+.leaflet-tooltip.pinlabel{pointer-events:none;}
 
 /* my location */
 .locate{
@@ -291,6 +298,18 @@ sheet{display:block;}
 .toast.on{opacity:1; transform:translate(-50%,0);}
 
 body.locked{overflow:hidden;}
+@media (max-width:430px){
+  header.top{padding-left:12px; padding-right:12px;}
+  .hlogo{width:34px; height:34px; border-radius:11px; font-size:17px;}
+  h1{font-size:15.5px; letter-spacing:-.5px;}
+  .hsub{font-size:10px;}
+  .seg button{padding:5px 9px; font-size:11px; gap:3px;}
+  .chips{padding:6px 12px 0;}
+  .chip{padding:6px 10px; font-size:12px;}
+  .coursebar{padding:5px 12px 7px;}
+  .cchip{padding:5px 9px; font-size:11.5px;}
+  .pin{width:30px; height:30px; font-size:14px;}
+}
 @media (min-width:640px){
   .sheet{max-height:78vh;}
   h1{font-size:19px;}
@@ -744,7 +763,7 @@ function pinIcon(p, opts={}){
 function buildMap(){
   map = L.map('map', {
     zoomControl:false, attributionControl:false,
-    minZoom:14, maxZoom:19, zoomSnap:0.5, tap:true
+    minZoom:15, maxZoom:19, zoomSnap:0.5, tap:true
   }).setView([37.3975,126.9203], 17);
 
   L.control.attribution({position:'bottomleft', prefix:false}).addTo(map);
@@ -759,11 +778,23 @@ function buildMap(){
 
   PLACES.forEach(p=>{
     const m=L.marker([p.lat,p.lng], {icon:pinIcon(p), keyboard:true, title:p.name, riseOnHover:true});
+    m.bindTooltip(p.name, {permanent:true, direction:'bottom', offset:[0,10], className:'pinlabel', opacity:1});
     m.on('click', ()=>openPlace(p.id, true));
     markers[p.id]=m;
   });
+  map.on('zoomend', syncLabels);
   renderMarkers();
+  fitVisible();
   setTimeout(()=>map.invalidateSize(), 120);
+}
+
+function syncLabels(){
+  const show = map.getZoom() >= 18;
+  PLACES.forEach(p=>{
+    const m=markers[p.id];
+    if(!m) return;
+    if(show && map.hasLayer(m)) m.openTooltip(); else m.closeTooltip();
+  });
 }
 
 function visibleSet(){
@@ -784,15 +815,16 @@ function renderMarkers(){
     m.setIcon(pinIcon(p,{num:num||null, dim, sel:selectedId===p.id}));
     m.addTo(layer);
   });
+  syncLabels();
 }
 
 function fitVisible(){
   if(!map) return;
   const vis=[...visibleSet()].map(byId).filter(Boolean);
   if(!vis.length) return;
-  if(vis.length===1){ map.setView([vis[0].lat,vis[0].lng], 18, {animate:true}); return; }
+  if(vis.length===1){ map.setView([vis[0].lat,vis[0].lng], 18.5, {animate:true}); return; }
   const b=L.latLngBounds(vis.map(p=>[p.lat,p.lng]));
-  map.fitBounds(b, {paddingTopLeft:[30,20], paddingBottomRight:[30,60], maxZoom:18, animate:true});
+  map.fitBounds(b, {paddingTopLeft:[34,24], paddingBottomRight:[34,70], maxZoom:17.5, animate:true});
 }
 function fitCourse(){ fitVisible(); }
 
@@ -885,7 +917,7 @@ function openPlace(id, fromMap){
   if(map){
     renderMarkers();
     if(view==='map'){
-      const z=Math.max(map.getZoom(),17);
+      const z=Math.max(map.getZoom(),18);
       map.setView([p.lat,p.lng], z, {animate:true});
       setTimeout(()=>{
         const h=$('#sheet').getBoundingClientRect().height||300;
