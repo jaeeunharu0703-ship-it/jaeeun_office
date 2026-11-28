@@ -2426,6 +2426,13 @@ function petMove(e){
   if(!petPlay.mode){
     if(petPlay.rev >= 1 && petPlay.total > 16) petPlay.mode = 'rub';
     else if(petPlay.total > 26 && ((Date.now() - petPlay.t0) > 110 || petPlay.total > 70)) petPlay.mode = 'drag';
+    if(petPlay.mode === 'drag'){
+      /* 끌기 시작: 손가락이 간 만큼 한 번에 따라잡아 영구히 뒤처지지 않게 */
+      petPlace(petPlay.x + (px - petPlay.sx), petPlay.y + (py - petPlay.sy));
+      if(ax > 1.2 && petFlipEl) petFlipEl.classList.toggle('flip', dx > 0);
+      if(petImgEl) petImgEl.classList.add('walk');
+      return;
+    }
   }
 
   if(petPlay.mode === 'drag'){
