@@ -2416,7 +2416,7 @@ function petMove(e){
   var ax = Math.abs(dx), ay = Math.abs(dy);
   var horiz = ax >= ay;
   var d = horiz ? dx : dy;
-  if(Math.abs(d) >= 1.5){
+  if(Math.abs(d) >= 3){
     var prev = horiz ? petPlay.dirX : petPlay.dirY;
     var sgn = d > 0 ? 1 : -1;
     if(prev && sgn !== prev) petPlay.rev++;
